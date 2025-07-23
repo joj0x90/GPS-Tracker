@@ -1,0 +1,49 @@
+body,
+html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+}
+
+#container {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+}
+
+#filterForm {
+        display: flex;
+        gap: 10px;
+        padding: 10px;
+        background: #f0f0f0;
+        flex-wrap: wrap;
+}
+
+#filterForm input,
+#filterForm select,
+#filterForm button {
+        flex: 1 1 150px;
+        padding: 6px 8px;
+        font-size: 1em;
+}
+
+#map {
+        flex-grow: 1;
+}
+
+/* On narrow screens, move filters below the map */
+@media (max-width: 600px) {
+        #container {
+                flex-direction: column;
+        }
+
+        #filterForm {
+                order: 2;
+                padding: 8px;
+        }
+
+        #map {
+                order: 1;
+                height: 60vh;
+        }
+}
