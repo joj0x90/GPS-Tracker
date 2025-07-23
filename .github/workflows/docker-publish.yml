@@ -19,7 +19,7 @@ jobs:
       - name: Build Docker image
         run: |
           IMAGE_NAME=docker.io/${{ secrets.DOCKER_USERNAME }}/gps-tracker
-          docker build -t $IMAGE_NAME:latest .
+          docker build -t $IMAGE_NAME:latest webserver
 
       - name: Push Docker image
         run: |
