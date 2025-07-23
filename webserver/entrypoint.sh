@@ -14,5 +14,10 @@ else
     echo "✅ SQLite database already exists."
 fi
 
+echo "▶ Creatig uploads/ directory and setting permissions"
+mkdir -p /var/www/html/uploads
+chown -R www-data:www-data /var/www/html/uploads
+chmod -R 775 /var/www/html/uploads
+
 echo "▶ Starting Apache..."
 exec apache2-foreground
