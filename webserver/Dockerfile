@@ -18,7 +18,7 @@ WORKDIR /var/www/html
 RUN echo "ServerName tracking.dev.jirweb.de" >> /etc/apache2/apache2.conf
 COPY apache-config.conf /etc/apache2/sites-enabled/000-default.conf
 COPY httpd.conf /etc/apache2/ports.conf
-EXPOSE 8080
+EXPOSE 80
 COPY ./src /var/www/html
 #### Apache ####
 
