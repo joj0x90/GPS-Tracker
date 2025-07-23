@@ -49,6 +49,7 @@ void loop() {
           Serial.println("Wi-Fi not connected");
         }
       } else {
+        wifi.disconnect();
         Serial.println("no connection window");
       }
     }

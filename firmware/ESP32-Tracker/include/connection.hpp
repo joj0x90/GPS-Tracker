@@ -10,6 +10,7 @@ public:
   void begin();
   void tryConnect(uint32_t currentEpoch); // current time in seconds since epoch
   bool connected() const;
+  void disconnect();
 
 private:
   const char *ssid;

@@ -41,3 +41,5 @@ void Connection::tryConnect(uint32_t epochSeconds) {
     }
   }
 }
+
+void Connection::disconnect() { WiFi.disconnect(); }
