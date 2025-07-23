@@ -4,13 +4,15 @@
 #include <TinyGPS++.h>
 #include <WebServer.h>
 #include <WiFi.h>
+#include <stdint.h>
 
 #include "FS.h"
 #include "SPIFFS.h"
 
+#define WIFI_SCAN_WINDOW 3            // Scan for 3 minutes
+#define WIFI_CHECK_INTERVAL 15 * 1000 // Check every 15 seconds
 #define SSID "AndroidAP_9626"
 #define WIFI_PASS "12345678"
-#define SECONDS 1000
 
 WebServer server(80);
 
@@ -22,7 +24,10 @@ const int TXPin = 22; // GPS RX -> ESP32 TX
 const uint32_t GPSBaud = 9600;
 
 unsigned long lastPrintTime = 0;
-const unsigned long printInterval = 15 * SECONDS; // 15 seconds
+const unsigned long printInterval = 15 * 1000; // 15 seconds
+
+unsigned long lastWiFiCheck = 0;
+bool wifiAttemptedThisHour = false;
 
 void setup() {
   Serial.begin(115200);
@@ -127,13 +132,16 @@ void connectWiFi() {
 
 void setupWebServer() {
   server.on("/", HTTP_GET, []() {
-    String html = "<h1>ESP32 GPX Logger</h1><a href='/download' "
-                  "download>Download GPX File</a>";
+    String html = "<h1>ESP32 GPX Logger</h1>";
+    html += "<a href='/download' download>Download GPX File</a><br><br>";
+    html += "<form action='/delete' method='POST'>";
+    html += "<input type='submit' value='Delete GPX File'>";
+    html += "</form>";
     server.send(200, "text/html", html);
   });
 
   server.on("/download", HTTP_GET, []() {
-    const char *sourceFile = FILENAME;                // e.g. "/track.gpx"
+    const char *sourceFile = FILENAME;
     const char *downloadFile = "/track_download.gpx"; // temporary file
 
     // Check if main file exists
@@ -187,11 +195,24 @@ void setupWebServer() {
         break;
       }
     }
-
     file.close();
 
-    // Optionally remove the temp file (uncomment if desired)
-    // SPIFFS.remove(downloadFile);
+    // remove the temp file
+    SPIFFS.remove(downloadFile);
+  });
+
+  server.on("/delete", HTTP_POST, []() {
+    if (SPIFFS.exists(FILENAME)) {
+      if (SPIFFS.remove(FILENAME)) {
+        server.sendHeader("Location", "/");
+        server.send(303); // 303 See Other (used for POST redirect)
+        Serial.println("Deleted /track.gpx");
+      } else {
+        server.send(500, "text/plain", "Failed to delete GPX file.");
+      }
+    } else {
+      server.send(404, "text/plain", "File not found.");
+    }
   });
 
   server.begin();
