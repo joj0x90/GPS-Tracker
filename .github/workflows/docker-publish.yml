@@ -18,10 +18,10 @@ jobs:
 
       - name: Build Docker image
         run: |
-          IMAGE_NAME=docker.io/${{ secrets.DOCKER_USERNAME }}/gps-tracker:latest
+          IMAGE_NAME=docker.io/${{ secrets.DOCKER_USERNAME }}/gps-tracker
           docker build -t $IMAGE_NAME:latest .
 
       - name: Push Docker image
         run: |
-          IMAGE_NAME=docker.io/${{ secrets.DOCKER_USERNAME }}/gps-tracker:latest
+          IMAGE_NAME=docker.io/${{ secrets.DOCKER_USERNAME }}/gps-tracker
           docker push $IMAGE_NAME:latest
