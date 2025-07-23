@@ -1,9 +1,6 @@
 #!/bin/bash
 set -e
 
-# Ensure db directory exists inside image
-mkdir -p /var/www/html/db && chown -R www-data:www-data /var/www/html/db
-
 echo "▶ Setting DB Permissions."
 chown -R www-data:www-data /var/www/html/db
 chmod -R 775 /var/www/html/db

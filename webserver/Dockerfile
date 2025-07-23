@@ -15,6 +15,7 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 
 #### Apache ####
 WORKDIR /var/www/html
+RUN mkdir -p /var/www/html/db && chown -R www-data:www-data /var/www/html/db
 RUN echo "ServerName tracking.dev.jirweb.de" >> /etc/apache2/apache2.conf
 COPY apache-config.conf /etc/apache2/sites-enabled/000-default.conf
 COPY httpd.conf /etc/apache2/ports.conf
