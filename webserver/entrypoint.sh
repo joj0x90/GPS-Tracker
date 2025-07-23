@@ -2,7 +2,7 @@
 set -e
 
 # Ensure db directory exists inside image
-RUN mkdir -p /var/www/html/db && chown -R www-data:www-data /var/www/html/db
+mkdir -p /var/www/html/db && chown -R www-data:www-data /var/www/html/db
 
 echo "▶ Setting DB Permissions."
 chown -R www-data:www-data /var/www/html/db
