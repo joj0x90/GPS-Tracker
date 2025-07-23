@@ -23,5 +23,10 @@ EXPOSE 80
 COPY ./src /var/www/html
 #### Apache ####
 
+## prepare database file
+RUN chmod 775 /var/www/html/db
+RUN chmod 664 /var/www/html/db/gpx.sqlite
+RUN chown -R $USER:$USER /var/www/html/db
+
 # Use it as the default startup command
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
