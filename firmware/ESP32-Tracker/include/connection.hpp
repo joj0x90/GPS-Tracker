@@ -1,7 +1,6 @@
 #pragma once
 
 #include <WiFi.h>
-#include <string>
 
 class Connection {
 public:
@@ -11,6 +10,7 @@ public:
   void tryConnect(uint32_t currentEpoch); // current time in seconds since epoch
   bool connected() const;
   void disconnect();
+  String get_MAC_address();
 
 private:
   const char *ssid;

@@ -43,3 +43,5 @@ void Connection::tryConnect(uint32_t epochSeconds) {
 }
 
 void Connection::disconnect() { WiFi.disconnect(); }
+
+String Connection::get_MAC_address() { return WiFi.macAddress().c_str(); }

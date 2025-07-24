@@ -11,16 +11,20 @@
 #define WIFI_PASS "12345678"
 
 unsigned long last_log_time = 0;
-const unsigned long log_interval = 15 * 1000; // 15 seconds
+const unsigned long log_interval =
+    30 * 1000; // get GPS position every 30 seconds
 
 Location location;
 Connection wifi(SSID, WIFI_PASS);
 Webservice uploader("https://tracking.dev.jirweb.de/upload.php");
+String device_uuid;
 
 void setup() {
   Serial.begin(115200);
   location.begin();
   wifi.begin();
+
+  device_uuid = wifi.get_MAC_address();
 
   if (!SPIFFS.begin(true)) {
     Serial.println("SPIFFS Mount Failed");
@@ -37,9 +41,6 @@ void loop() {
     GPX gpx = location.getData();
     if (gpx.longitude != 0 && gpx.latitude != 0 && gpx.altitude != 0 &&
         gpx.timestamp != "0") {
-      Serial.printf("[%s]: Lat: %.6f, Lng: %.6f, Alt: %.2f\n",
-                    gpx.timestamp.c_str(), gpx.latitude, gpx.longitude,
-                    gpx.altitude);
       logGPX(gpx);
 
       auto gps_time = location.getUnixTime();
@@ -54,6 +55,9 @@ void loop() {
               if (!SPIFFS.remove(FILENAME)) {
                 Serial.println("File uploaded. But could not be deleted from "
                                "local storage.");
+              } else {
+                Serial.println(
+                    "File was uploaded and deleted from local storage.");
               }
             }
           } else {
@@ -97,6 +101,7 @@ void logGPX(GPX gpx) {
                 gpx.longitude);
     file.printf("    <ele>%.2f</ele>\n", gpx.altitude);
     file.printf("    <time>%s</time>\n", gpx.timestamp.c_str());
+    file.printf("    <sensor_nr>%s</sensor_nr>\n", device_uuid.c_str());
     file.println("  </trkpt>");
     file.close();
   }
@@ -108,8 +113,6 @@ bool isConnectionWindow(uint32_t epochSeconds) {
   for (int i = 0; i < NUM_WINDOWS; ++i) {
     uint8_t start = connection_windows[i];
     if (currentMinute >= start && currentMinute < start + 3) {
-      Serial.printf("we are in connection window: %d, at minute: %d\n", start,
-                    currentMinute);
       return true;
     }
   }

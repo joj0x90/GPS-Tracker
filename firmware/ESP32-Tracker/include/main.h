@@ -14,8 +14,8 @@ void connectWiFi();
 /// sets up and starts the webserver for serving the gpx file.
 void setupWebServer();
 
-constexpr int NUM_WINDOWS = 3;
-constexpr uint8_t connection_windows[NUM_WINDOWS] = {0, 20, 40};
+constexpr int NUM_WINDOWS = 1;
+constexpr uint8_t connection_windows[NUM_WINDOWS] = {0};
 
 /// check, if we are inisde the connection window
 bool isConnectionWindow(uint32_t epochSeconds);

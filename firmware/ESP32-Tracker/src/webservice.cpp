@@ -135,11 +135,12 @@ bool Webservice::uploadFile(const String &filePath) {
   }
 
   String response = rawClient->readString();
-  Serial.println("[Webservice] Server response:");
+  Serial.println("[Webservice] Server response: ");
   Serial.println(response);
 
   return response.indexOf("200 OK") >= 0 ||
-         response.indexOf("201 Created") >= 0;
+         response.indexOf("201 Created") >= 0 ||
+         response.indexOf("File uploaded and parsed successfully") != -1;
 }
 
 String Webservice::getContentType(const String &filename) {
