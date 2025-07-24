@@ -51,3 +51,25 @@ html {
 .last_upload {
         text-decoration: underline;
 }
+
+.admin-body {
+        font-family: sans-serif;
+        margin: 2em;
+}
+
+form {
+        max-width: 400px;
+        margin: auto;
+}
+
+input[type=password],
+button {
+        padding: 0.5em;
+        margin-top: 1em;
+        width: 100%;
+}
+
+.warning {
+        color: red;
+        font-weight: bold;
+}
