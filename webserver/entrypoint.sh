@@ -7,9 +7,10 @@ chmod -R 775 /var/www/html/db
 
 echo "▶ Checking for gpx.sqlite..."
 
-if [ ! -f /var/www/html/db/gpx.sqlite ]; then
+if [ ! -f /var/www/html/db/gpx.sqlite ] || [ ! -s /var/www/html/db/gpx.sqlite ]; then
     echo "🔧 Initializing SQLite database..."
     php /var/www/html/init_db.php
+    chmod 664 /var/www/html/db/gpx.sqlite
 else
     echo "✅ SQLite database already exists."
 fi
