@@ -54,11 +54,14 @@ $sensors = $db->query("SELECT DISTINCT sensor_nr FROM gpx_points ORDER BY sensor
                         return await res.json();
                 }
 
-                function drawTrack(points) {
+                function drawTrack(points, display_errors = true) {
                         trackLayer.clearLayers();
 
                         if (points.length === 0) {
-                                alert('No points found for this filter');
+                                if (display_errors) {
+                                        alert('No points found for this filter');
+                                }
+                                console.log('No points found for this filter');
                                 return;
                         }
 
@@ -87,8 +90,9 @@ $sensors = $db->query("SELECT DISTINCT sensor_nr FROM gpx_points ORDER BY sensor
                 window.addEventListener('DOMContentLoaded', async () => {
                         // show all tracks when opening the page
                         const points = await fetchTrackData('1970-01-01 00:00:00', '2099-12-31 23:59:59', 'default');
-                        drawTrack(points);
+                        drawTrack(points, false);
                 });
+
         </script>
 </body>
 
