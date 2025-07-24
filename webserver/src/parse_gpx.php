@@ -1,6 +1,6 @@
 <?php
 
-function parseGPX($filename, $sensorNr = 'default')
+function parseGPX($filename, $sensor = 'default')
 {
         // Open SQLite database
         $db = new PDO('sqlite:db/gpx.sqlite');
@@ -39,10 +39,11 @@ function parseGPX($filename, $sensorNr = 'default')
                 $lon = (float) $trkpt['lon'];
                 $ele = isset($trkpt->ele) ? (float) $trkpt->ele : null;
                 $time = isset($trkpt->time) ? date('Y-m-d H:i:s', strtotime((string) $trkpt->time)) : null;
+                $sensor_nr = isset($trkpt->sensor_nr) ? strtoupper((string) $trkpt->sensor_nr) : 'default';
 
                 if ($lat && $lon && $time) {
                         $stmt->execute([
-                                ':sensor_nr' => $sensorNr,
+                                ':sensor_nr' => $sensor_nr,
                                 ':lat' => $lat,
                                 ':lon' => $lon,
                                 ':ele' => $ele,
