@@ -1,10 +1,6 @@
 #!/bin/bash
 set -e
 
-echo "▶ Setting DB Permissions."
-chown -R www-data:www-data /var/www/html/db
-chmod -R 775 /var/www/html/db
-
 echo "▶ Checking for gpx.sqlite..."
 
 if [ ! -f /var/www/html/db/gpx.sqlite ] || [ ! -s /var/www/html/db/gpx.sqlite ]; then
@@ -14,6 +10,10 @@ if [ ! -f /var/www/html/db/gpx.sqlite ] || [ ! -s /var/www/html/db/gpx.sqlite ];
 else
     echo "✅ SQLite database already exists."
 fi
+
+echo "▶ Setting DB Permissions."
+chown -R www-data:www-data /var/www/html/db
+chmod -R 775 /var/www/html/db
 
 echo "▶ Creatig uploads/ directory and setting permissions"
 mkdir -p /var/www/html/uploads
