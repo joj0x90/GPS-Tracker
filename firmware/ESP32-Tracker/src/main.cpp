@@ -1,6 +1,7 @@
 #include "main.h"
 
 #include "connection.hpp"
+#include "webservice.hpp"
 
 #include "FS.h"
 #include "SPIFFS.h"
@@ -14,6 +15,7 @@ const unsigned long log_interval = 15 * 1000; // 15 seconds
 
 Location location;
 Connection wifi(SSID, WIFI_PASS);
+Webservice uploader("https://tracking.dev.jirweb.de/upload.php");
 
 void setup() {
   Serial.begin(115200);
@@ -45,6 +47,18 @@ void loop() {
         wifi.tryConnect(gps_time);
         if (wifi.connected()) {
           Serial.println("Wi-Fi connected");
+
+          bool success = uploader.uploadFile(FILENAME);
+          if (success) {
+            if (SPIFFS.exists(FILENAME)) {
+              if (!SPIFFS.remove(FILENAME)) {
+                Serial.println("File uploaded. But could not be deleted from "
+                               "local storage.");
+              }
+            }
+          } else {
+            Serial.println("Upload failed.");
+          }
         } else {
           Serial.println("Wi-Fi not connected");
         }
