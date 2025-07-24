@@ -81,7 +81,12 @@ $sensors = $db->query("SELECT DISTINCT sensor_nr FROM gpx_points ORDER BY sensor
                         }
 
                         const points = await fetchTrackData(start, end, sensor);
-                        console.log("found " + points.length + " points");
+                        drawTrack(points);
+                });
+
+                window.addEventListener('DOMContentLoaded', async () => {
+                        // show all tracks when opening the page
+                        const points = await fetchTrackData('1970-01-01 00:00:00', '2099-12-31 23:59:59', 'default');
                         drawTrack(points);
                 });
         </script>
