@@ -2,6 +2,7 @@
 // Connect to DB to get distinct sensors for dropdown
 $db = new PDO('sqlite:db/gpx.sqlite');
 $sensors = $db->query("SELECT DISTINCT sensor_nr FROM gpx_points ORDER BY sensor_nr")->fetchAll(PDO::FETCH_COLUMN);
+$last_upload = $db->query("SELECT timestamp FROM gpx_points ORDER BY timestamp DESC LIMIT 1")->fetchAll(PDO::FETCH_COLUMN);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -16,6 +17,20 @@ $sensors = $db->query("SELECT DISTINCT sensor_nr FROM gpx_points ORDER BY sensor
 
 <body>
         <div id="container">
+                <div class="last_upload" align="center">
+                        <?php
+                        $date = date_create($last_upload[0]);
+                        $formatted = date_format($date, "d.m.Y H:i");
+                        $now = new DateTime('now');
+                        $diff = $now->diff($date);
+                        $hours = abs(floor(($diff->days * 24) + $diff->h + ($diff->i / 60) + ($diff->s / 3600)));
+                        echo "last Upload: " . $formatted . " UTC (" .
+                                $hours .
+                                " hours ago)";
+
+                        ?>
+                </div><br />
+
                 <form id="filterForm" onsubmit="return false;">
                         <input type="datetime-local" id="startTime" name="startTime" />
                         <input type="datetime-local" id="endTime" name="endTime" />

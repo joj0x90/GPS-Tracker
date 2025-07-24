@@ -47,3 +47,7 @@ html {
                 height: 60vh;
         }
 }
+
+.last_upload {
+        text-decoration: underline;
+}
