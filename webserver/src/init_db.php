@@ -22,6 +22,14 @@ try {
             elevation REAL,
             timestamp DATETIME NOT NULL
         );
+
+        CREATE TABLE IF NOT EXISTS tracks (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL UNIQUE,
+                color TEXT NOT NULL
+        );
+
+        ALTER TABLE gpx_points ADD COLUMN track_id INTEGER;
     ");
 
         echo "✅ Database initialized at $dbFile\n";

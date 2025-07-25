@@ -3,6 +3,14 @@
 $db = new PDO('sqlite:db/gpx.sqlite');
 $sensors = $db->query("SELECT DISTINCT sensor_nr FROM gpx_points ORDER BY sensor_nr")->fetchAll(PDO::FETCH_COLUMN);
 $last_fix = $db->query("SELECT timestamp FROM gpx_points ORDER BY timestamp DESC LIMIT 1")->fetchAll(PDO::FETCH_COLUMN);
+$tracks = $db->query("
+    SELECT t.id, t.name, t.color, COUNT(g.id) as points
+    FROM tracks t
+    LEFT JOIN gpx_points g ON g.track_id = t.id
+    GROUP BY t.id
+    ORDER BY t.name
+")->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -35,6 +43,19 @@ $last_fix = $db->query("SELECT timestamp FROM gpx_points ORDER BY timestamp DESC
                         ?>
                 </div><br />
 
+                <form id="trackForm" onsubmit="return false;" style="margin-bottom: 1em;">
+                        <label for="trackSelect">Select Track:</label>
+                        <select id="trackSelect">
+                                <option value="">-- Show All Tracks --</option>
+                                <?php foreach ($tracks as $track): ?>
+                                        <option value="<?= htmlspecialchars($track['id']) ?>"
+                                                data-color="<?= htmlspecialchars($track['color']) ?>">
+                                                <?= htmlspecialchars($track['name']) ?> (<?= $track['points'] ?> pts)
+                                        </option>
+                                <?php endforeach; ?>
+                        </select>
+                </form>
+
                 <form id="filterForm" onsubmit="return false;">
                         <input type="datetime-local" id="startTime" name="startTime" />
                         <input type="datetime-local" id="endTime" name="endTime" />
@@ -59,11 +80,12 @@ $last_fix = $db->query("SELECT timestamp FROM gpx_points ORDER BY timestamp DESC
 
                 let trackLayer = L.layerGroup().addTo(map);
 
-                async function fetchTrackData(start, end, sensor) {
+                async function fetchTrackData(start, end, sensor, track_id = null) {
                         const params = new URLSearchParams();
                         if (start) params.append('startTime', start);
                         if (end) params.append('endTime', end);
                         if (sensor) params.append('sensor', sensor);
+                        if (track_id) params.append('track_id', track_id);
 
                         const res = await fetch('get_points.php?' + params.toString());
                         if (!res.ok) {
@@ -73,7 +95,7 @@ $last_fix = $db->query("SELECT timestamp FROM gpx_points ORDER BY timestamp DESC
                         return await res.json();
                 }
 
-                function drawTrack(points, display_errors = true) {
+                function drawTrack(points, defaultColor = 'blue', display_errors = true) {
                         trackLayer.clearLayers();
 
                         if (points.length === 0) {
@@ -84,12 +106,21 @@ $last_fix = $db->query("SELECT timestamp FROM gpx_points ORDER BY timestamp DESC
                                 return;
                         }
 
-                        const latlngs = points.map(p => [p.latitude, p.longitude]);
+                        // Group points by track_id (or use default)
+                        const grouped = {};
+                        for (const p of points) {
+                                const key = p.track_id || 'no_track';
+                                if (!grouped[key]) grouped[key] = { color: p.color || defaultColor, points: [] };
+                                grouped[key].points.push([p.latitude, p.longitude]);
+                        }
 
-                        L.polyline(latlngs, { color: 'blue' }).addTo(trackLayer);
+                        for (const [trackId, group] of Object.entries(grouped)) {
+                                L.polyline(group.points, { color: group.color }).addTo(trackLayer);
+                        }
 
-                        // Fit map bounds to track
-                        map.fitBounds(latlngs);
+                        // Fit map bounds
+                        const allLatLngs = points.map(p => [p.latitude, p.longitude]);
+                        map.fitBounds(allLatLngs);
                 }
 
                 document.getElementById('filterBtn').addEventListener('click', async () => {
@@ -106,12 +137,25 @@ $last_fix = $db->query("SELECT timestamp FROM gpx_points ORDER BY timestamp DESC
                         drawTrack(points);
                 });
 
-                window.addEventListener('DOMContentLoaded', async () => {
-                        // show all tracks when opening the page
-                        const points = await fetchTrackData('1970-01-01 00:00:00', '2099-12-31 23:59:59', 'default');
-                        drawTrack(points, false);
+                document.getElementById('trackSelect').addEventListener('change', async (e) => {
+                        const selected = e.target.selectedOptions[0];
+                        const trackId = selected.value;
+                        const trackColor = selected.dataset.color || 'blue';
+
+                        if (!trackId) {
+                                // Show all tracks
+                                const allPoints = await fetchTrackData('1970-01-01 00:00:00', '2099-12-31 23:59:59', 'default');
+                                drawTrack(allPoints, 'blue', false);
+                        } else {
+                                const points = await fetchTrackData(null, null, null, trackId);
+                                drawTrack(points, trackColor);
+                        }
                 });
 
+                window.addEventListener('DOMContentLoaded', async () => {
+                        const allPoints = await fetchTrackData('1970-01-01 00:00:00', '2099-12-31 23:59:59', 'default');
+                        drawTrack(allPoints, 'blue', false);
+                });
         </script>
 </body>
 

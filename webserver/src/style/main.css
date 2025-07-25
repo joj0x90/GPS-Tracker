@@ -73,3 +73,26 @@ button {
         color: red;
         font-weight: bold;
 }
+
+.warning-btn {
+        background-color: red;
+        border-radius: .2rem;
+        border: 1px solid black;
+        color: white;
+        font-weight: bold;
+}
+
+.warning-btn:hover {
+        background-color: rgb(255, 99, 99);
+}
+
+.attention-btn {
+        background-color: orange;
+        border-radius: .2rem;
+        border: 1px solid black;
+        font-weight: bold;
+}
+
+.attention-btn:hover {
+        background-color: #ffbf48;
+}
