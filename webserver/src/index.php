@@ -155,7 +155,7 @@ $tracks = $db->query("
 
                         if (!trackId) {
                                 // Show all tracks
-                                const allPoints = await fetchTrackData('1970-01-01 00:00:00', '2099-12-31 23:59:59', 'default');
+                                const allPoints = await fetchTrackData('1970-01-01 00:00:00', '2099-12-31 23:59:59');
                                 drawTrack(allPoints, 'blue', false);
                         } else {
                                 const points = await fetchTrackData(null, null, null, trackId);
