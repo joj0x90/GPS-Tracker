@@ -115,9 +115,26 @@ $tracks = $db->query("
                         }
 
                         for (const [trackId, group] of Object.entries(grouped)) {
-                                // Draw polyline from coordinates
-                                const latlngs = group.points.map(p => [p.latitude, p.longitude]);
-                                L.polyline(latlngs, { color: group.color }).addTo(trackLayer);
+                                const points = group.points;
+
+                                for (let i = 0; i < points.length - 1; i++) {
+                                        const p1 = points[i];
+                                        const p2 = points[i + 1];
+
+                                        const latlngs = [
+                                                [p1.latitude, p1.longitude],
+                                                [p2.latitude, p2.longitude]
+                                        ];
+
+                                        const t1 = new Date(p1.timestamp);
+                                        const t2 = new Date(p2.timestamp);
+                                        const diffMinutes = Math.abs((t2 - t1) / 1000 / 60);
+
+                                        L.polyline(latlngs, {
+                                                color: group.color,
+                                                dashArray: diffMinutes > 5 ? '5, 10' : null // dashed if time gap > 5 min
+                                        }).addTo(trackLayer);
+                                }
 
                                 // Draw individual waypoints with tooltips
                                 group.points.forEach(p => {
@@ -128,7 +145,7 @@ $tracks = $db->query("
                                                 fillOpacity: 0.8
                                         }).addTo(trackLayer);
 
-                                        marker.bindTooltip(`ID: ${p.id}<br>${p.timestamp}`, {
+                                        marker.bindTooltip(`ID: #${p.id}<br>${p.timestamp}`, {
                                                 permanent: false,
                                                 direction: 'top',
                                                 offset: [0, -5],
