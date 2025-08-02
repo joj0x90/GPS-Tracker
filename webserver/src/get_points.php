@@ -15,6 +15,7 @@ $query = "
         g.longitude, 
         g.track_id,
         g.timestamp,
+        g.elevation,
         t.color
     FROM gpx_points g
     LEFT JOIN tracks t ON g.track_id = t.id

@@ -145,7 +145,7 @@ $tracks = $db->query("
                                                 fillOpacity: 0.8
                                         }).addTo(trackLayer);
 
-                                        marker.bindTooltip(`ID: #${p.id}<br>${p.timestamp}`, {
+                                        marker.bindTooltip(`ID: #${p.id}<br>${p.timestamp}<br>elevation: ${p.elevation}m`, {
                                                 permanent: false,
                                                 direction: 'top',
                                                 offset: [0, -5],
