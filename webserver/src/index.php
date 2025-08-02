@@ -56,18 +56,6 @@ $tracks = $db->query("
                         </select>
                 </form>
 
-                <form id="filterForm" onsubmit="return false;">
-                        <input type="datetime-local" id="startTime" name="startTime" />
-                        <input type="datetime-local" id="endTime" name="endTime" />
-                        <select id="sensorSelect" name="sensor">
-                                <option value="">-- Select Sensor --</option>
-                                <?php foreach ($sensors as $sensor): ?>
-                                        <option value="<?= htmlspecialchars($sensor) ?>"><?= htmlspecialchars($sensor) ?>
-                                        </option>
-                                <?php endforeach; ?>
-                        </select>
-                        <button id="filterBtn" type="submit">Filter</button>
-                </form>
                 <div id="map"></div>
         </div>
 
@@ -160,20 +148,6 @@ $tracks = $db->query("
                         map.fitBounds(allLatLngs);
                 }
 
-                document.getElementById('filterBtn').addEventListener('click', async () => {
-                        const start = document.getElementById('startTime').value;
-                        const end = document.getElementById('endTime').value;
-                        const sensor = document.getElementById('sensorSelect').value;
-
-                        if (!sensor) {
-                                alert('Please select a sensor.');
-                                return;
-                        }
-
-                        const points = await fetchTrackData(start, end, sensor);
-                        drawTrack(points);
-                });
-
                 document.getElementById('trackSelect').addEventListener('change', async (e) => {
                         const selected = e.target.selectedOptions[0];
                         const trackId = selected.value;
@@ -190,7 +164,7 @@ $tracks = $db->query("
                 });
 
                 window.addEventListener('DOMContentLoaded', async () => {
-                        const allPoints = await fetchTrackData('1970-01-01 00:00:00', '2099-12-31 23:59:59', 'default');
+                        const allPoints = await fetchTrackData('1970-01-01 00:00:00', '2099-12-31 23:59:59');
                         drawTrack(allPoints, 'blue', false);
                 });
         </script>
