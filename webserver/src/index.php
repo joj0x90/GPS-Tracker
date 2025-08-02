@@ -111,12 +111,32 @@ $tracks = $db->query("
                         for (const p of points) {
                                 const key = p.track_id || 'no_track';
                                 if (!grouped[key]) grouped[key] = { color: p.color || defaultColor, points: [] };
-                                grouped[key].points.push([p.latitude, p.longitude]);
+                                grouped[key].points.push(p);
                         }
 
                         for (const [trackId, group] of Object.entries(grouped)) {
-                                L.polyline(group.points, { color: group.color }).addTo(trackLayer);
+                                // Draw polyline from coordinates
+                                const latlngs = group.points.map(p => [p.latitude, p.longitude]);
+                                L.polyline(latlngs, { color: group.color }).addTo(trackLayer);
+
+                                // Draw individual waypoints with tooltips
+                                group.points.forEach(p => {
+                                        const marker = L.circleMarker([p.latitude, p.longitude], {
+                                                radius: 3,
+                                                color: group.color,
+                                                weight: 1,
+                                                fillOpacity: 0.8
+                                        }).addTo(trackLayer);
+
+                                        marker.bindTooltip(`ID: ${p.id}<br>${p.timestamp}`, {
+                                                permanent: false,
+                                                direction: 'top',
+                                                offset: [0, -5],
+                                                sticky: true
+                                        });
+                                });
                         }
+
 
                         // Fit map bounds
                         const allLatLngs = points.map(p => [p.latitude, p.longitude]);
