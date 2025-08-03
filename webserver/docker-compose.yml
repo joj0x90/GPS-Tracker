@@ -12,4 +12,6 @@ services:
     environment:
       - APACHE_RUN_USER=www-data
       - APACHE_RUN_GROUP=www-data
+      - PHP_UPLOAD_MAX_FILESIZE=10M
+      - PHP_POST_MAX_SIZE=10M
     restart: unless-stopped
