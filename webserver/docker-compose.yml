@@ -8,10 +8,9 @@ services:
       - "80:80"
     volumes:
       - ./src:/var/www/html
+      - ./php.ini:/usr/local/etc/php/conf.d/custom.ini
     working_dir: /var/www/html
     environment:
       - APACHE_RUN_USER=www-data
       - APACHE_RUN_GROUP=www-data
-      - PHP_UPLOAD_MAX_FILESIZE=10M
-      - PHP_POST_MAX_SIZE=10M
     restart: unless-stopped
