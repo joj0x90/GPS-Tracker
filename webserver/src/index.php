@@ -57,9 +57,24 @@ $tracks = $db->query("
                 </form>
 
                 <div id="map"></div>
+
+                <!-- Floating icon in bottom right -->
+                <div id="infoIcon">📊</div>
+
+                <!-- Pop-up overlay -->
+                <div id="infoPopup">
+                        <div id="infoContent">
+                                <button id="closePopup">&times;</button>
+                                <h3>Track Information</h3>
+                                <p>Total Distance: <span id="totalDistance">Calculating...</span></p>
+                                <canvas id="elevationChart" height="200"></canvas>
+                        </div>
+                </div>
         </div>
 
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+        <!-- custom JS functions -->
         <script>
                 const map = L.map('map').setView([0, 0], 2);
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -67,6 +82,58 @@ $tracks = $db->query("
                 }).addTo(map);
 
                 let trackLayer = L.layerGroup().addTo(map);
+                function getDistanceFromLatLon(lat1, lon1, lat2, lon2) {
+                        const R = 6371000; // meters
+                        const dLat = deg2rad(lat2 - lat1);
+                        const dLon = deg2rad(lon2 - lon1);
+                        const a =
+                                Math.sin(dLat / 2) ** 2 +
+                                Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+                                Math.sin(dLon / 2) ** 2;
+                        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                        return R * c;
+                }
+
+                function deg2rad(deg) {
+                        return deg * (Math.PI / 180);
+                }
+
+                let elevationChart = null;
+
+                function renderElevationChart(data) {
+                        if (elevationChart) elevationChart.destroy();
+
+                        elevationChart = new Chart(document.getElementById("elevationChart"), {
+                                type: 'line',
+                                data: {
+                                        datasets: [{
+                                                label: 'Elevation (m)',
+                                                data: data,
+                                                borderColor: 'green',
+                                                fill: false,
+                                                tension: 0.2
+                                        }]
+                                },
+                                options: {
+                                        scales: {
+                                                x: {
+                                                        type: 'time',
+                                                        time: {
+                                                                tooltipFormat: 'dd.MM HH:mm',
+                                                                displayFormats: {
+                                                                        hour: 'dd.MM HH:mm',
+                                                                        minute: 'HH:mm',
+                                                                }
+                                                        },
+                                                        title: { display: true, text: 'Time' }
+                                                },
+                                                y: {
+                                                        title: { display: true, text: 'Altitude (m)' }
+                                                }
+                                        }
+                                }
+                        });
+                }
 
                 async function fetchTrackData(start, end, sensor, track_id = null) {
                         const params = new URLSearchParams();
@@ -102,46 +169,49 @@ $tracks = $db->query("
                                 grouped[key].points.push(p);
                         }
 
+                        let totalDistance = 0;
+                        let elevationData = [];
+
                         for (const [trackId, group] of Object.entries(grouped)) {
                                 const points = group.points;
 
                                 for (let i = 0; i < points.length - 1; i++) {
-                                        const p1 = points[i];
-                                        const p2 = points[i + 1];
-
-                                        const latlngs = [
-                                                [p1.latitude, p1.longitude],
-                                                [p2.latitude, p2.longitude]
-                                        ];
-
-                                        const t1 = new Date(p1.timestamp);
-                                        const t2 = new Date(p2.timestamp);
-                                        const diffMinutes = Math.abs((t2 - t1) / 1000 / 60);
-
-                                        L.polyline(latlngs, {
-                                                color: group.color,
-                                                dashArray: diffMinutes > 5 ? '5, 10' : null // dashed if time gap > 5 min
-                                        }).addTo(trackLayer);
+                                        const p1 = points[i]; const p2 = points[i + 1]; const latlngs = [
+                                                [p1.latitude, p1.longitude], [p2.latitude, p2.longitude]]; const t1 = new Date(p1.timestamp); const
+                                                        t2 = new Date(p2.timestamp); const diffMinutes = Math.abs((t2 - t1) / 1000 / 60); L.polyline(latlngs, {
+                                                                color: group.color, dashArray: diffMinutes > 5 ? '5, 10' : null // dashed if time gap > 5 min
+                                                        }).addTo(trackLayer);
                                 }
 
                                 // Draw individual waypoints with tooltips
-                                group.points.forEach(p => {
+                                group.points.forEach((p, i) => {
                                         const marker = L.circleMarker([p.latitude, p.longitude], {
                                                 radius: 3,
                                                 color: group.color,
                                                 weight: 1,
                                                 fillOpacity: 0.8
-                                        }).addTo(trackLayer);
-
-                                        marker.bindTooltip(`ID: #${p.id}<br>${p.timestamp}<br>elevation: ${p.elevation}m`, {
+                                        }).bindTooltip(`ID: #${p.id}<br>${p.timestamp}<br>elevation: ${p.elevation}m`, {
                                                 permanent: false,
                                                 direction: 'top',
                                                 offset: [0, -5],
                                                 sticky: true
-                                        });
+                                        }).addTo(trackLayer);
+
+                                        if (i > 0) {
+                                                const prev = group.points[i - 1];
+                                                const d = getDistanceFromLatLon(prev.latitude, prev.longitude, p.latitude, p.longitude);
+                                                totalDistance += d;
+                                        }
+
+                                        elevationData.push({ x: new Date(p.timestamp), y: p.altitude });
                                 });
                         }
 
+                        // Show distance
+                        document.getElementById("totalDistance").textContent = `${(totalDistance / 1000).toFixed(2)} km`;
+
+                        // Draw chart
+                        renderElevationChart(elevationData);
 
                         // Fit map bounds
                         const allLatLngs = points.map(p => [p.latitude, p.longitude]);
@@ -159,8 +229,18 @@ $tracks = $db->query("
                                 drawTrack(allPoints, 'blue', false);
                         } else {
                                 const points = await fetchTrackData(null, null, null, trackId);
-                                drawTrack(points, trackColor);
+                                drawTrack(points, trackColor, false);
                         }
+                });
+
+                // will open the popup when icon is clicked
+                document.getElementById("infoIcon").addEventListener("click", () => {
+                        document.getElementById("infoPopup").style.display = "block";
+                });
+
+                // will close the popup when clos-icon is clicked.
+                document.getElementById("closePopup").addEventListener("click", () => {
+                        document.getElementById("infoPopup").style.display = "none";
                 });
 
                 window.addEventListener('DOMContentLoaded', async () => {

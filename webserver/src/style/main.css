@@ -29,6 +29,7 @@ html {
 
 #map {
         flex-grow: 1;
+        min-height: 10rem;
 }
 
 /* On narrow screens, move filters below the map */
@@ -95,4 +96,52 @@ button {
 
 .attention-btn:hover {
         background-color: #ffbf48;
+}
+
+#infoIcon {
+        position: absolute;
+        bottom: 1rem;
+        right: 1rem;
+        background: white;
+        border-radius: 50%;
+        padding: 1rem;
+        cursor: pointer;
+        font-size: 20px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+        z-index: 1000;
+        height: auto;
+}
+
+#infoPopup {
+        display: none;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 10rem;
+        background: lightgrey;
+        box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
+        z-index: 1001;
+        padding: 15px;
+        overflow-y: auto;
+}
+
+#infoContent h3 {
+        margin-top: 0;
+}
+
+#closePopup {
+        position: absolute;
+        width: 2rem;
+        height: 2rem;
+        margin-right: 2rem;
+        top: 1rem;
+        right: 1rem;
+        background: darkgrey;
+        border: none;
+        cursor: pointer;
+        border-radius: .25rem;
+        font-size: 1rem;
+        padding: .25rem;
 }
