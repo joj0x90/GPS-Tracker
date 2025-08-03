@@ -19,7 +19,7 @@ RUN mkdir -p /var/www/html/db && chown -R www-data:www-data /var/www/html/db
 RUN echo "ServerName tracking.dev.jirweb.de" >> /etc/apache2/apache2.conf
 COPY apache-config.conf /etc/apache2/sites-enabled/000-default.conf
 COPY httpd.conf /etc/apache2/ports.conf
-COPY php.ini /local/etc/php/conf.d/custom.ini
+COPY php.ini /usr/local/etc/php/conf.d/custom.ini
 EXPOSE 80
 COPY ./src /var/www/html
 #### Apache ####
