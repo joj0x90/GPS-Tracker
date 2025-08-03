@@ -21,6 +21,11 @@ $tracks = $db->query("
         <title>GPX Track Viewer</title>
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
         <link rel="stylesheet" href="style/main.css" />
+
+        <!-- thirdparty tools for displaying proper html5 charts -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/luxon"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon"></script>
 </head>
 
 <body>
@@ -59,7 +64,7 @@ $tracks = $db->query("
                 <div id="map"></div>
 
                 <!-- Floating icon in bottom right -->
-                <div id="infoIcon">📊</div>
+                <div id="infoIcon">🗠</div>
 
                 <!-- Pop-up overlay -->
                 <div id="infoPopup">
@@ -67,7 +72,9 @@ $tracks = $db->query("
                                 <button id="closePopup">&times;</button>
                                 <h3>Track Information</h3>
                                 <p>Total Distance: <span id="totalDistance">Calculating...</span></p>
-                                <canvas id="elevationChart" height="200"></canvas>
+                                <div id="chartContainer">
+                                        <canvas id="elevationChart"></canvas>
+                                </div>
                         </div>
                 </div>
         </div>
@@ -115,6 +122,8 @@ $tracks = $db->query("
                                         }]
                                 },
                                 options: {
+                                        responsive: true,
+                                        maintainAspectRatio: false,
                                         scales: {
                                                 x: {
                                                         type: 'time',
@@ -203,7 +212,7 @@ $tracks = $db->query("
                                                 totalDistance += d;
                                         }
 
-                                        elevationData.push({ x: new Date(p.timestamp), y: p.altitude });
+                                        elevationData.push({ x: new Date(p.timestamp), y: p.elevation });
                                 });
                         }
 
