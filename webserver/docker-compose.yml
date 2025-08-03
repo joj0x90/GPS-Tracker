@@ -8,7 +8,6 @@ services:
       - "80:80"
     volumes:
       - ./src:/var/www/html
-      - ./php.ini:/usr/local/etc/php/conf.d/custom.ini
     working_dir: /var/www/html
     environment:
       - APACHE_RUN_USER=www-data
