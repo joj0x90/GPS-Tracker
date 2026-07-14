@@ -145,12 +145,12 @@ html {
 }
 
 .admin-content {
-        max-width: 960px;
         margin: 0 auto;
         display: flex;
         flex-direction: column;
         align-items: center;
         gap: 1rem;
+        max-width: 75rem;
 }
 
 .admin-content > h1,
@@ -162,7 +162,6 @@ html {
 .admin-content > table,
 .admin-content > hr {
         width: 100%;
-        max-width: 75rem;
 }
 
 .admin-content > .warning {

@@ -43,9 +43,8 @@ $tracks = $tracksStmt->fetchAll(PDO::FETCH_ASSOC);
         <div id="container">
                 <div class="top-bar">
                         <div class="top-bar-left">
-                                <div class="Filter">Filters:</div>
+                                <div>Select Year:</div>
                                 <form id="filterForm" onsubmit="return false;">
-                                        <label for="year">Year:</label>
                                         <select id="year" onchange="window.location.href = '?year=' + this.value">
                                                 <?php foreach ($years as $year): ?>
                                                         <option value="<?= htmlspecialchars($year) ?>" <?= $year === $selectedYear ? 'selected' : '' ?>><?= htmlspecialchars($year) ?></option>
