@@ -1,8 +1,8 @@
-FROM php:8.3-apache
+FROM php:apache
 
 RUN apt update && apt upgrade -y
 RUN apt install -y \
-        libsqlite3-dev
+        sqlite3 libsqlite3-dev
 
 RUN docker-php-ext-install pdo pdo_sqlite
 
