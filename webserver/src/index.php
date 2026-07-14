@@ -3,13 +3,24 @@
 $db = new PDO('sqlite:db/gpx.sqlite');
 $sensors = $db->query("SELECT DISTINCT sensor_nr FROM gpx_points ORDER BY sensor_nr")->fetchAll(PDO::FETCH_COLUMN);
 $last_fix = $db->query("SELECT timestamp FROM gpx_points ORDER BY timestamp DESC LIMIT 1")->fetchAll(PDO::FETCH_COLUMN);
-$tracks = $db->query("
+
+$selectedYear = isset($_GET['year']) ? trim((string) $_GET['year']) : '';
+if ($selectedYear === '') {
+    $selectedYear = date('Y');
+}
+
+$years = $db->query("SELECT DISTINCT strftime('%Y', timestamp) as year FROM gpx_points ORDER BY year DESC")->fetchAll(PDO::FETCH_COLUMN);
+
+$tracksStmt = $db->prepare("
     SELECT t.id, t.name, t.color, COUNT(g.id) as points
     FROM tracks t
-    LEFT JOIN gpx_points g ON g.track_id = t.id
+    INNER JOIN gpx_points g ON g.track_id = t.id
+    WHERE strftime('%Y', g.timestamp) = :year
     GROUP BY t.id
     ORDER BY t.name
-")->fetchAll(PDO::FETCH_ASSOC);
+");
+$tracksStmt->execute([':year' => $selectedYear]);
+$tracks = $tracksStmt->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 <!DOCTYPE html>
@@ -35,17 +46,10 @@ $tracks = $db->query("
                                 <div class="Filter">Filters:</div>
                                 <form id="filterForm" onsubmit="return false;">
                                         <label for="year">Year:</label>
-                                        <select id="year">
-                                                <?php
-                                                $years = $db->query("SELECT DISTINCT strftime('%Y', timestamp) as year FROM gpx_points ORDER BY year DESC")->fetchAll(PDO::FETCH_COLUMN);
-                                                foreach ($years as $year) {
-                                                        if($year == date('Y')) {
-                                                                echo "<option value=\"$year\" selected>$year</option>";
-                                                        } else {
-                                                                echo "<option value=\"$year\">$year</option>";
-                                                        }
-                                                }
-                                                ?>
+                                        <select id="year" onchange="window.location.href = '?year=' + this.value">
+                                                <?php foreach ($years as $year): ?>
+                                                        <option value="<?= htmlspecialchars($year) ?>" <?= $year === $selectedYear ? 'selected' : '' ?>><?= htmlspecialchars($year) ?></option>
+                                                <?php endforeach; ?>
                                         </select>
                                 </form>
                         </div>
