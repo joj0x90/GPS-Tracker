@@ -119,7 +119,7 @@ button {
         left: 0;
         right: 0;
         bottom: 0;
-        width: 100%;
+        width: 98.5%;
         height: 33vh;
         background: lightgrey;
         box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
@@ -160,4 +160,28 @@ button {
         border-radius: .25rem;
         font-size: 1rem;
         padding: .25rem;
+}
+
+#infoContent {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+}
+
+.popup-column {
+        flex: 1 1 45%;
+        /* Grow/shrink as needed, base width ~45% */
+        min-width: 200px;
+}
+
+.popup-column button {
+        width: 25%;
+}
+
+#chartContainer {
+        width: 100%;
+        height: 10rem;
+        margin-top: 1rem;
 }

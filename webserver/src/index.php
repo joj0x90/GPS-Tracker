@@ -70,13 +70,23 @@ $tracks = $db->query("
                 <div id="infoPopup">
                         <div id="infoContent">
                                 <button id="closePopup">&times;</button>
-                                <h3>Track Information</h3>
-                                <p>Total Distance: <span id="totalDistance">Calculating...</span></p>
+
+                                <div class="popup-column">
+                                        <h3>Track Information</h3>
+                                        <p>Total Distance: <span id="totalDistance">Calculating...</span></p>
+                                </div>
+
+                                <div class="popup-column">
+                                        <button onclick="showElevationData()">Show Elevation data</button>
+                                        <button onclick="showSpeedData()">Show Speed data</button>
+                                </div>
+
                                 <div id="chartContainer">
-                                        <canvas id="elevationChart"></canvas>
+                                        <canvas id="chart"></canvas>
                                 </div>
                         </div>
                 </div>
+
         </div>
 
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -105,20 +115,85 @@ $tracks = $db->query("
                         return deg * (Math.PI / 180);
                 }
 
-                let elevationChart = null;
+                let chart = null;
 
-                function renderElevationChart(data) {
-                        if (elevationChart) elevationChart.destroy();
+                let elevationData = [];
+                let speedData = [];
 
-                        elevationChart = new Chart(document.getElementById("elevationChart"), {
+                async function collectData(points = null) {
+                        if (points == null) {
+                                // get current points
+                                const track_id = document.getElementById("trackSelect").value
+                                console.log("id: " + track_id);
+
+                                if (track_id) {
+                                        points = await fetchTrackData(null, null, null, track_id);
+                                } else {
+                                        points = await fetchTrackData('1970-01-01 00:00:00', '2099-12-31 23:59:59');
+                                }
+                        }
+
+                        console.log("len: " + points.length);
+
+                        elevationData = [];
+                        speedData = [];
+
+                        // Group points by track_id (or use default)
+                        const grouped = {};
+                        for (const p of points) {
+                                const key = p.track_id || 'no_track';
+                                if (!grouped[key]) grouped[key] = { color: p.color || defaultColor, points: [] };
+                                grouped[key].points.push(p);
+                        }
+
+                        for (const [trackId, group] of Object.entries(grouped)) {
+                                group.points.forEach((p, i) => {
+                                        let speed = 0;
+
+                                        if (i > 0) {
+                                                const prev = group.points[i - 1];
+                                                const d = getDistanceFromLatLon(prev.latitude, prev.longitude, p.latitude, p.longitude);
+                                                const prev_date = new Date(prev.timestamp);
+                                                const this_date = new Date(p.timestamp);
+                                                speed = (d / ((this_date.getTime() / 1000) - (prev_date.getTime() / 1000))) * 3.6;      // calculate speed in km/h
+                                        }
+
+                                        elevationData.push({ x: new Date(p.timestamp), y: p.elevation });
+                                        if (speed != 0) {
+                                                speedData.push({ x: new Date(p.timestamp), y: speed });
+                                        }
+                                });
+                        }
+                }
+
+                function showElevationData(points = null) {
+                        if (elevationData.length === 0 || points == null) {
+                                collectData(points);
+                        }
+
+                        renderChart(elevationData, 'Elevation (m)', 'green');
+                }
+
+                function showSpeedData(points = null) {
+                        if (speedData.length === 0 || points == null) {
+                                collectData(points);
+                        }
+
+                        renderChart(speedData, 'Speed (km/h)', 'blue');
+                }
+
+                function renderChart(data, dataLabel, color = 'green') {
+                        if (chart) chart.destroy();
+
+                        chart = new Chart(document.getElementById("chart"), {
                                 type: 'line',
                                 data: {
                                         datasets: [{
-                                                label: 'Elevation (m)',
+                                                label: dataLabel,
                                                 data: data,
-                                                borderColor: 'green',
+                                                borderColor: color,
                                                 fill: false,
-                                                tension: 0.2
+                                                tension: 0
                                         }]
                                 },
                                 options: {
@@ -137,7 +212,7 @@ $tracks = $db->query("
                                                         title: { display: true, text: 'Time' }
                                                 },
                                                 y: {
-                                                        title: { display: true, text: 'Altitude (m)' }
+                                                        title: { display: true, text: dataLabel }
                                                 }
                                         }
                                 }
@@ -179,7 +254,6 @@ $tracks = $db->query("
                         }
 
                         let totalDistance = 0;
-                        let elevationData = [];
 
                         for (const [trackId, group] of Object.entries(grouped)) {
                                 const points = group.points;
@@ -194,6 +268,7 @@ $tracks = $db->query("
 
                                 // Draw individual waypoints with tooltips
                                 group.points.forEach((p, i) => {
+                                        let speed = 0;
                                         const marker = L.circleMarker([p.latitude, p.longitude], {
                                                 radius: 3,
                                                 color: group.color,
@@ -211,16 +286,11 @@ $tracks = $db->query("
                                                 const d = getDistanceFromLatLon(prev.latitude, prev.longitude, p.latitude, p.longitude);
                                                 totalDistance += d;
                                         }
-
-                                        elevationData.push({ x: new Date(p.timestamp), y: p.elevation });
                                 });
                         }
 
                         // Show distance
                         document.getElementById("totalDistance").textContent = `${(totalDistance / 1000).toFixed(2)} km`;
-
-                        // Draw chart
-                        renderElevationChart(elevationData);
 
                         // Fit map bounds
                         const allLatLngs = points.map(p => [p.latitude, p.longitude]);
@@ -236,9 +306,11 @@ $tracks = $db->query("
                                 // Show all tracks
                                 const allPoints = await fetchTrackData('1970-01-01 00:00:00', '2099-12-31 23:59:59');
                                 drawTrack(allPoints, 'blue', false);
+                                showSpeedData(allPoints);
                         } else {
                                 const points = await fetchTrackData(null, null, null, trackId);
                                 drawTrack(points, trackColor, false);
+                                showSpeedData(points);
                         }
                 });
 
