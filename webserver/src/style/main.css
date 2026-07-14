@@ -13,9 +13,8 @@ html {
 
 #filterForm {
         display: flex;
-        gap: 10px;
+        gap: 1rem;
         padding: 10px;
-        background: #f0f0f0;
         flex-wrap: wrap;
 }
 
@@ -49,18 +48,174 @@ html {
         }
 }
 
+.top-bar {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.5rem 1rem;
+}
+
+.top-bar-left,
+.top-bar-right {
+        min-height: 1px;
+}
+
+.top-bar-center {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+}
+
 .last_upload {
         text-decoration: underline;
 }
 
 .admin-body {
         font-family: sans-serif;
-        margin: 2em;
+        margin: 0;
+        padding: 0;
+        background: #f4f7fb;
+        color: #233447;
 }
 
-form {
-        max-width: 400px;
-        margin: auto;
+.admin-page {
+        min-height: 100vh;
+        padding: 1rem 1rem 2rem;
+}
+
+.admin-header {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 1rem;
+        max-width: 1100px;
+        margin: 0 auto 1.5rem;
+        padding: 0.75rem 1rem;
+        background: #ffffff;
+        border: 1px solid #dce4ee;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.admin-title {
+        margin: 0;
+        text-align: center;
+        font-size: 1.5rem;
+}
+
+.home-btn {
+        justify-self: start;
+        display: inline-block;
+        padding: 0.6rem 1rem;
+        border-radius: 999px;
+        border: 1px solid #cbd5e1;
+        background: #f8fafc;
+        color: #233447;
+        text-decoration: none;
+        font-weight: 600;
+}
+
+.home-btn:hover {
+        background: #769ec6;
+}
+
+.admin-header-spacer {
+        min-height: 1px;
+}
+
+.admin-logout-form {
+        justify-self: end;
+}
+
+.logout-btn {
+        width: auto;
+        margin: 0;
+        padding: 0.6rem 1rem;
+        border-radius: 999px;
+        border: 1px solid #cbd5e1;
+        background: #2f4f6f;
+        color: #ffffff;
+        font-weight: 600;
+}
+
+.logout-btn:hover {
+        background: #406993;
+}
+
+.admin-content {
+        max-width: 960px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+}
+
+.admin-content > h1,
+.admin-content > h2,
+.admin-content > h3,
+.admin-content > p,
+.admin-content > .warning,
+.admin-content > form,
+.admin-content > table,
+.admin-content > hr {
+        width: 100%;
+        max-width: 75rem;
+}
+
+.admin-content > .warning {
+        text-align: center;
+}
+
+.admin-form {
+        max-width: 420px;
+        margin: 0 auto;
+        padding: 1rem;
+        background: #ffffff;
+        border: 1px solid #e3e8ee;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.admin-form label {
+        display: block;
+        margin-top: 0.7rem;
+}
+
+.admin-form input,
+.admin-form select,
+.admin-form button,
+.admin-form textarea {
+        width: 100%;
+        box-sizing: border-box;
+        margin-top: 0.5rem;
+}
+
+.create-track-form {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+}
+
+.form-row {
+        display: flex;
+        gap: 1rem;
+}
+
+.form-row-two > .form-field {
+        flex: 1 1 0;
+}
+
+.form-field {
+        display: flex;
+        flex-direction: column;
+}
+
+.form-actions {
+        margin-top: auto;
+        padding-top: 0.5rem;
 }
 
 input[type=password],
@@ -184,4 +339,102 @@ button {
         width: 100%;
         height: 10rem;
         margin-top: 1rem;
+}
+
+#login-btn {
+        width: 15%;
+        float: right;
+}
+
+@media (max-width: 600px) {
+        .admin-page {
+                padding: 0.75rem 0.75rem 1.5rem;
+        }
+
+        .admin-header {
+                grid-template-columns: 1fr auto;
+                padding: 0.75rem;
+        }
+
+        .admin-title {
+                grid-column: 1 / -1;
+                justify-self: center;
+        }
+
+        .admin-logout-form {
+                justify-self: end;
+        }
+
+        .admin-content {
+                align-items: stretch;
+        }
+
+        .admin-content > h1,
+        .admin-content > h2,
+        .admin-content > h3,
+        .admin-content > p,
+        .admin-content > .warning,
+        .admin-content > form,
+        .admin-content > table,
+        .admin-content > hr {
+                max-width: 100%;
+        }
+
+        .admin-form {
+                padding: 0.9rem;
+        }
+
+        .form-row {
+                flex-direction: column;
+                gap: 0.75rem;
+        }
+}
+
+.trackTable,
+.tracktable {
+        width: min(95%, 1000px);
+        margin: 2rem auto;
+        border-collapse: collapse;
+        background: #ffffff;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        overflow: hidden;
+}
+
+.trackTable th,
+.tracktable th {
+        background: #2f4f6f;
+        color: #ffffff;
+        padding: 0.75rem 0.9rem;
+        text-align: left;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        border: 1px solid #dce4ee;
+}
+
+.trackTable td,
+.tracktable td {
+        padding: 0.7rem 0.9rem;
+        text-align: left;
+        border: 1px solid #e3e8ee;
+}
+
+.trackTable tr:nth-child(even) td,
+.tracktable tr:nth-child(even) td {
+        background: #f7f9fc;
+}
+
+.trackTable tr:nth-child(odd) td,
+.tracktable tr:nth-child(odd) td {
+        background: #ffffff;
+}
+
+.trackTable tr:hover td,
+.tracktable tr:hover td {
+        background: #eef5ff;
+}
+
+.trackTable td:nth-child(5) {
+        text-align:center;
+        font-weight: bold;
 }

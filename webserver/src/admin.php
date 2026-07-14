@@ -116,17 +116,31 @@ if (isset($_POST['create_track'])) {
         <link rel="stylesheet" href="style/main.css" />
 </head>
 
-<body>
-        <h2>Admin Panel</h2>
-        <?php
-        // uncomment following line to generate a new hash and set it at the top of the file.
-        // echo password_hash('passw0rd1', PASSWORD_DEFAULT); 
-        ?>
+<body class="admin-body">
+        <div class="admin-page">
+                <header class="admin-header">
+                        <a href="index.php" class="home-btn">Home</a>
+                        <h1 class="admin-title">Admin Panel</h1>
+                        <?php if (isset($_SESSION['admin'])): ?>
+                                <form method="POST" class="admin-logout-form">
+                                        <input type="hidden" name="logout" value="1">
+                                        <button type="submit" class="logout-btn">Log Out</button>
+                                </form>
+                        <?php else: ?>
+                                <div class="admin-header-spacer"></div>
+                        <?php endif; ?>
+                </header>
 
-        <?php if (!isset($_SESSION['admin'])): ?>
+                <div class="admin-content">
+                        <?php
+                        // uncomment following line to generate a new hash and set it at the top of the file.
+                        // echo password_hash('passw0rd1', PASSWORD_DEFAULT); 
+                        ?>
+
+                        <?php if (!isset($_SESSION['admin'])): ?>
                 <?php if (isset($error))
                         echo "<p class='warning'>$error</p>"; ?>
-                <form method="POST">
+                <form method="POST" class="admin-form">
                         <label for="password">Enter admin password:</label>
                         <input type="password" name="password" id="password" required>
                         <button type="submit">Login</button>
@@ -136,8 +150,6 @@ if (isset($_POST['create_track'])) {
                         echo "<p style='color:green'>$message</p>"; ?>
                 <?php if (isset($error))
                         echo "<p class='warning'>$error</p>";
-
-                echo "<h2>📋 Existing Tracks</h2>";
 
                 try {
                         $db = new PDO('sqlite:/var/www/html/db/gpx.sqlite');
@@ -156,9 +168,7 @@ if (isset($_POST['create_track'])) {
                         $tracks = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         if ($tracks) {
                                 ?>
-                                <h3>🛠 Manage Tracks</h3>
-
-                                <table border="1" cellpadding="5" cellspacing="0">
+                                <table class="trackTable" cellpadding="5" cellspacing="0">
                                         <thead>
                                                 <tr>
                                                         <th>Track Name</th>
@@ -199,57 +209,80 @@ if (isset($_POST['create_track'])) {
                 }
                 ?>
 
-                <h2>➕ Create New Track</h2>
-                <form method="POST">
-                        <label for="track_start">Start Time:</label>
-                        <input type="datetime-local" name="track_start" required><br><br>
+                <form method="POST" class="admin-form create-track-form">
+                        <h2>Create New Track</h2>
 
-                        <label for="track_end">End Time:</label>
-                        <input type="datetime-local" name="track_end" required><br><br>
+                        <div class="form-row form-row-two">
+                                <div class="form-field">
+                                        <label for="track_start">Start Time:</label>
+                                        <input type="datetime-local" name="track_start" required>
+                                </div>
+                                <div class="form-field">
+                                        <label for="track_end">End Time:</label>
+                                        <input type="datetime-local" name="track_end" required>
+                                </div>
+                        </div>
 
-                        <label for="track_name">Track Name:</label>
-                        <input type="text" name="track_name" required><br><br>
+                        <div class="form-row form-row-two">
+                                <div class="form-field">
+                                        <label for="track_name">Track Name:</label>
+                                        <input type="text" name="track_name" required>
+                                </div>
+                                <div class="form-field">
+                                        <label for="track_color">Track Color:</label>
+                                        <input type="color" name="track_color" value="#ff0000" required>
+                                </div>
+                        </div>
 
-                        <label for="track_color">Track Color:</label>
-                        <input type="color" name="track_color" value="#ff0000" required><br><br>
-
-                        <button type="submit" name="create_track">Create Track</button>
+                        <div class="form-actions">
+                                <button type="submit" name="create_track">Create Track</button>
+                        </div>
                 </form>
 
-                <hr>
                 <!-- Delete all -->
-                <form method="POST" onsubmit="return confirm('⚠️ Are you sure you want to delete ALL GPX points?');">
+                <form method="POST" class="admin-form" onsubmit="return confirm('⚠️ Are you sure you want to delete ALL GPX points?');">
+                        <h2>Delete All GPX Points</h2>
+                        <p>This will permanently delete all GPX points from the database.</p>
                         <input type="hidden" name="delete" value="1">
                         <button type="submit" class="warning-btn">Delete All GPX Points</button>
                 </form>
 
                 <!-- Delete range -->
-                <form method="POST"
+                <form method="POST" class="admin-form create-track-form"
                         onsubmit="return confirm('⚠️ Are you sure you want to delete GPX points in this time range?');">
-                        <label for="start_time">Start Time:</label>
-                        <input type="datetime-local" name="start_time" id="start_time" required><br />
+                        <h2>Delete GPX Points in Range</h2>
+                        <p>This will permanently delete GPX points from the database within the specified time range.</p>
 
-                        <label for="end_time">End Time: </label>
-                        <input type="datetime-local" name="end_time" id="end_time" required>
+                        <div class="form-row form-row-two">
+                                <div class="form-field">
+                                        <label for="start_time">Start Time:</label>
+                                        <input type="datetime-local" name="start_time" id="start_time" required>
+                                </div>
+                                <div class="form-field">
+                                        <label for="end_time">End Time:</label>
+                                        <input type="datetime-local" name="end_time" id="end_time" required>
+                                </div>
+                        </div>
 
                         <input type="hidden" name="delete_range" value="1">
-                        <button type="submit" class="attention-btn">Delete GPX Points in
-                                Range</button>
+                        <div class="form-actions">
+                                <button type="submit" class="attention-btn">Delete GPX Points in Range</button>
+                        </div>
                 </form>
 
-                <h3>Delete a Track</h3>
-                <select id="deleteTrackSelect"></select>
-                <button id="deleteTrackBtn">Delete Track</button>
+
+                <div class="admin-form">
+                        <h3>Delete a complete Track</h3>
+                        <select id="deleteTrackSelect"></select>
+                        <button id="deleteTrackBtn">Delete Track</button>
+                </div>  
 
 
                 <br />&nbsp;<br />
 
-                <!-- Logout -->
-                <form method="POST">
-                        <input type="hidden" name="logout" value="1">
-                        <button type="submit" style="margin-top: 2em;">Log Out</button>
-                </form>
-        <?php endif; ?>
+                <?php endif; ?>
+                </div>
+        </div>
 
         <script>
                 document.querySelectorAll('.saveBtn').forEach(btn => {

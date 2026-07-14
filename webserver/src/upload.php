@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['gpx_file'])) {
 
         <body>
                 <h1>Upload GPX File</h1>
-                <form method="post" enctype="multipart/form-data">
+                <form method="post" class="admin-form" enctype="multipart/form-data">
                         <input type="file" name="gpx_file" accept=".gpx" required>
                         <button type="submit">Upload</button>
                 </form>

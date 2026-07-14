@@ -30,36 +30,64 @@ $tracks = $db->query("
 
 <body>
         <div id="container">
-                <div class="last_upload" align="center">
-                        <?php
-                        if ($last_fix == null) {
-                                echo "last GPS-fix: never";
-                        } else {
-                                $date = date_create($last_fix[0]);
-                                $formatted = date_format($date, "d.m.Y H:i");
-                                $now = new DateTime('now');
-                                $diff = $now->diff($date);
-                                $hours = abs(floor(($diff->days * 24) + $diff->h + ($diff->i / 60) + ($diff->s / 3600)));
-                                echo "last GPS-fix: " . $formatted . " UTC (" .
-                                        $hours .
-                                        " hours ago)";
-                        }
+                <div class="top-bar">
+                        <div class="top-bar-left">
+                                <div class="Filter">Filters:</div>
+                                <form id="filterForm" onsubmit="return false;">
+                                        <label for="year">Year:</label>
+                                        <select id="year">
+                                                <?php
+                                                $years = $db->query("SELECT DISTINCT strftime('%Y', timestamp) as year FROM gpx_points ORDER BY year DESC")->fetchAll(PDO::FETCH_COLUMN);
+                                                foreach ($years as $year) {
+                                                        if($year == date('Y')) {
+                                                                echo "<option value=\"$year\" selected>$year</option>";
+                                                        } else {
+                                                                echo "<option value=\"$year\">$year</option>";
+                                                        }
+                                                }
+                                                ?>
+                                        </select>
+                                </form>
+                        </div>
 
-                        ?>
-                </div><br />
+                        <div class="top-bar-center">
+                                <div class="last_upload">
+                                        <?php
+                                        if ($last_fix == null) {
+                                                echo "last GPS-fix: never";
+                                        } else {
+                                                $date = date_create($last_fix[0]);
+                                                $formatted = date_format($date, "d.m.Y H:i");
+                                                $now = new DateTime('now');
+                                                $diff = $now->diff($date);
+                                                $hours = abs(floor(($diff->days * 24) + $diff->h + ($diff->i / 60) + ($diff->s / 3600)));
+                                                echo "last GPS-fix: " . $formatted . " UTC (" .
+                                                        $hours .
+                                                        " hours ago)";
+                                        }
 
-                <form id="trackForm" onsubmit="return false;" style="margin-bottom: 1em;">
-                        <label for="trackSelect">Select Track:</label>
-                        <select id="trackSelect">
-                                <option value="">-- Show All Tracks --</option>
-                                <?php foreach ($tracks as $track): ?>
-                                        <option value="<?= htmlspecialchars($track['id']) ?>"
-                                                data-color="<?= htmlspecialchars($track['color']) ?>">
-                                                <?= htmlspecialchars($track['name']) ?> (<?= $track['points'] ?> pts)
-                                        </option>
-                                <?php endforeach; ?>
-                        </select>
-                </form>
+                                        ?>
+                                </div>
+
+                                <form id="trackForm" onsubmit="return false;" style="margin-bottom: 1em;">
+                                        <label for="trackSelect">Select Track:</label>
+                                        <select id="trackSelect">
+                                                <option value="">-- Show All Tracks --</option>
+                                                <?php foreach ($tracks as $track): ?>
+                                                        <option value="<?= htmlspecialchars($track['id']) ?>"
+                                                                data-color="<?= htmlspecialchars($track['color']) ?>">
+                                                                <?= htmlspecialchars($track['name']) ?> (<?= $track['points'] ?> pts)
+                                                        </option>
+                                                <?php endforeach; ?>
+                                        </select>
+                                </form>
+                        </div>
+
+                        <div class="top-bar-right">
+                                <button id="login-btn" onclick="window.location.href='admin.php'">Admin</button>
+                        </div>
+                </div>
+
 
                 <div id="map"></div>
 

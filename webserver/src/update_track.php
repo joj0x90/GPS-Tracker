@@ -21,7 +21,6 @@ $color = $data['color'];
 $id = $data['id'];
 $start = normalizeTimestamp($data['start']);
 $end = normalizeTimestamp($data['end']);
-echo $start;
 
 $stmt = $db->prepare("UPDATE tracks SET name = :name, color = :color WHERE id = :id");
 $stmt->execute([
@@ -38,4 +37,4 @@ $db->prepare("UPDATE gpx_points SET track_id = NULL WHERE track_id = :id")
 $db->prepare("UPDATE gpx_points SET track_id = :id WHERE timestamp >= :start AND timestamp <= :end")
         ->execute([':id' => $id, ':start' => $start, ':end' => $end]);
 
-echo "✅ Track updated.";
+echo "✅ Track " . $name . " updated.";
