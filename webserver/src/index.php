@@ -1,4 +1,6 @@
 <?php
+include_once 'helper_functions.php';
+
 // Connect to DB to get distinct sensors for dropdown
 $db = new PDO('sqlite:db/gpx.sqlite');
 $sensors = $db->query("SELECT DISTINCT sensor_nr FROM gpx_points ORDER BY sensor_nr")->fetchAll(PDO::FETCH_COLUMN);
@@ -66,8 +68,8 @@ $tracks = $tracksStmt->fetchAll(PDO::FETCH_ASSOC);
                                                 $diff = $now->diff($date);
                                                 $hours = abs(floor(($diff->days * 24) + $diff->h + ($diff->i / 60) + ($diff->s / 3600)));
                                                 echo "last GPS-fix: " . $formatted . " UTC (" .
-                                                        $hours .
-                                                        " hours ago)";
+                                                        calc_time($hours) .
+                                                        " ago)";
                                         }
 
                                         ?>
@@ -88,7 +90,9 @@ $tracks = $tracksStmt->fetchAll(PDO::FETCH_ASSOC);
                         </div>
 
                         <div class="top-bar-right">
-                                <button id="login-btn" onclick="window.location.href='admin.php'"><img src="style/icons/admin.png" width="20" height="20"> Admin</button>
+                                <button id="top-btn" onclick="window.location.href='admin.php'"><img src="style/icons/admin.png" width="20" height="20"> Admin</button>
+                                <button id="top-btn" onclick="window.location.href='about.php'"><img src="style/icons/info.png" width="20" height="20"> About</button>
+
                         </div>
                 </div>
 
@@ -333,10 +337,11 @@ $tracks = $tracksStmt->fetchAll(PDO::FETCH_ASSOC);
                         const selected = e.target.selectedOptions[0];
                         const trackId = selected.value;
                         const trackColor = selected.dataset.color || 'blue';
+                        const year_filter = document.getElementById('year').value || new Date().getFullYear();
 
                         if (!trackId) {
                                 // Show all tracks
-                                const allPoints = await fetchTrackData('1970-01-01 00:00:00', '2099-12-31 23:59:59');
+                                const allPoints = await fetchTrackData(year_filter + '-01-01 00:00:00', year_filter + '-12-31 23:59:59');
                                 drawTrack(allPoints, 'blue', false);
                                 showSpeedData(allPoints);
                         } else {
@@ -357,7 +362,8 @@ $tracks = $tracksStmt->fetchAll(PDO::FETCH_ASSOC);
                 });
 
                 window.addEventListener('DOMContentLoaded', async () => {
-                        const allPoints = await fetchTrackData('1970-01-01 00:00:00', '2099-12-31 23:59:59');
+                        const year_filter = document.getElementById('year').value || new Date().getFullYear();
+                        const allPoints = await fetchTrackData(year_filter + '-01-01 00:00:00', year_filter + '-12-31 23:59:59');
                         drawTrack(allPoints, 'blue', false);
                 });
         </script>

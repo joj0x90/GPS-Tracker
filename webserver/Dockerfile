@@ -1,5 +1,10 @@
 FROM php:apache
 
+ARG APP_COMMIT_SHA=dev
+ARG APP_BUILD_TIMESTAMP=unknown
+ENV APP_COMMIT_SHA=$APP_COMMIT_SHA \
+    APP_BUILD_TIMESTAMP=$APP_BUILD_TIMESTAMP
+
 RUN apt update && apt upgrade -y
 RUN apt install -y \
         sqlite3 libsqlite3-dev
