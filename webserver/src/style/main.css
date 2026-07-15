@@ -59,7 +59,6 @@ html {
 .top-bar-left{
         display: flex;
         min-height: 1px;
-        flex-direction: column;
         align-items: flex-start;
 }
 
@@ -228,8 +227,7 @@ html {
         padding-top: 0.5rem;
 }
 
-input[type=password],
-button {
+input[type=password] {
         padding: 0.5em;
         margin-top: 1em;
         width: 100%;
@@ -257,6 +255,98 @@ button {
         border-radius: .2rem;
         border: 1px solid black;
         font-weight: bold;
+}
+
+/* Mobile hamburger and menu */
+.hamburger-btn {
+        display: none;
+        width:auto;
+        height:auto;
+        background: transparent;
+        border: 1px solid #cbd5e1;
+        padding: 0.4rem 0.6rem;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        position: fixed;
+        left: .5rem;
+        top: .5rem;
+}
+
+/* Prevent background scroll when menu open */
+body.no-scroll { overflow: hidden; }
+
+.mobile-menu {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: auto;
+        max-width: 360px;
+        transform: translateX(-120%);
+        transition: transform 220ms ease;
+        background: rgba(240,248,255,0.98);
+        border-right: 1px solid #e6eef6;
+        box-shadow: 6px 0 18px rgba(0,0,0,0.12);
+        padding: 1rem;
+        z-index: 1100;
+        overflow-y: auto;
+}
+
+.mobile-menu.open {
+        transform: translateX(0);
+}
+
+.mobile-menu .mobile-close {
+        position: absolute;
+        right: .5rem;
+        top: .5rem;
+        background: transparent;
+        border: none;
+        font-size: 1.4rem;
+        cursor: pointer;
+        color: #334155;
+}
+
+.mobile-menu .mobile-menu-inner {
+        margin-top: 2.2rem;
+}
+
+.mobile-menu .mobile-links {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-top: 1rem;
+}
+
+.mobile-menu .mobile-links a {
+        padding: 0.65rem 0.75rem;
+        border-radius: 8px;
+        text-decoration: none;
+        color: #ffffff;
+        font-weight: 600;
+        display: inline-block;
+        text-align: center;
+}
+
+.mobile-menu .mobile-links a.admin, .mobile-menu .mobile-links a.about { 
+        border-radius: .5rem;
+        background: #7ba3cb;
+        color: #333;
+        font-weight: 600;
+        border: 0.1rem solid #ccc;
+ }
+
+@media (max-width: 600px) {
+        .hamburger-btn { display: inline-block; }
+        .top-bar-right { display: none; }
+        .top-bar-left > label, .top-bar-left > .year-label { display: none; }
+        #filterForm { display: none; }
+        .top-bar { position: relative; }
+        /* Ensure last fix and track select stay visible */
+        .top-bar-center { align-items: flex-start; }
+        /* Make map below header */
+        #map { margin-top: 56px; }
 }
 
 .attention-btn:hover {
@@ -356,10 +446,10 @@ button {
         align-self: right;
         padding: 0.2rem 1rem;
         border-radius: 1rem;
-        border: 1px solid #cbd5e1;
         background: #7ba3cb;
         color: #333;
         font-weight: 600;
+        border: 0.2rem solid #ccc;
 }
 
 #top-btn:hover {

@@ -46,7 +46,8 @@ $tracks = $tracksStmt->fetchAll(PDO::FETCH_ASSOC);
         <div id="container">
                 <div class="top-bar">
                         <div class="top-bar-left">
-                                <div>Select Year:</div>
+                                <button id="hamburgerBtn" class="hamburger-btn" onclick="toggleMenu()" aria-label="Menu">☰</button>
+                                <div class="year-label">Select Year:</div>
                                 <form id="filterForm" onsubmit="return false;">
                                         <select id="year" onchange="window.location.href = '?year=' + this.value">
                                                 <?php foreach ($years as $year): ?>
@@ -96,6 +97,24 @@ $tracks = $tracksStmt->fetchAll(PDO::FETCH_ASSOC);
                         </div>
                 </div>
 
+                <!-- Mobile menu for small screens -->
+                <div id="mobileMenu" class="mobile-menu" aria-hidden="true">
+                        <button id="mobileClose" class="mobile-close" onclick="toggleMenu()" aria-label="Close">×</button>
+                        <div class="mobile-menu-inner">
+                                <form id="mobileFilterForm" onsubmit="return false;">
+                                        <label for="mobileYear">Year:</label>
+                                        <select id="mobileYear" onchange="window.location.href='?year='+this.value">
+                                                <?php foreach ($years as $year): ?>
+                                                        <option value="<?= htmlspecialchars($year) ?>" <?= $year === $selectedYear ? 'selected' : '' ?>><?= htmlspecialchars($year) ?></option>
+                                                <?php endforeach; ?>
+                                        </select>
+                                </form>
+                                <div class="mobile-links">
+                                        <a class="admin" href="admin.php">Admin</a>
+                                        <a class="about" href="about.php">About</a>
+                                </div>
+                        </div>
+                </div>
 
                 <div id="map"></div>
 
@@ -129,6 +148,30 @@ $tracks = $tracksStmt->fetchAll(PDO::FETCH_ASSOC);
 
         <!-- custom JS functions -->
         <script>
+                function toggleMenu() {
+                        const m = document.getElementById('mobileMenu');
+                        if (!m) return;
+                        const opening = !m.classList.contains('open');
+                        m.classList.toggle('open');
+                        m.setAttribute('aria-hidden', !opening);
+                        document.body.classList.toggle('no-scroll', opening);
+                        // move focus to close button when opened
+                        if (opening) {
+                                const close = document.getElementById('mobileClose');
+                                if (close) close.focus();
+                        }
+                }
+
+                window.addEventListener('resize', () => {
+                        const m = document.getElementById('mobileMenu');
+                        if (!m) return;
+                        if (window.innerWidth > 600) {
+                                m.classList.remove('open');
+                                m.setAttribute('aria-hidden', 'true');
+                                document.body.classList.remove('no-scroll');
+                        }
+                });
+
                 const map = L.map('map').setView([0, 0], 2);
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                         maxZoom: 19,
@@ -181,6 +224,7 @@ $tracks = $tracksStmt->fetchAll(PDO::FETCH_ASSOC);
                                 if (!grouped[key]) grouped[key] = { color: p.color || defaultColor, points: [] };
                                 grouped[key].points.push(p);
                         }
+                        console.log("grouped: " + Object.keys(grouped).length);
 
                         for (const [trackId, group] of Object.entries(grouped)) {
                                 group.points.forEach((p, i) => {
