@@ -38,6 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['gpx_file'])) {
 
         <head>
                 <title>Upload GPX File</title>
+                <link rel="icon" type="image/x-icon" href="style/icons/favicon.ico">
         </head>
 
         <body>

@@ -112,6 +112,7 @@ if (isset($_POST['create_track'])) {
 
 <head>
         <title>Admin Panel</title>
+        <link rel="icon" type="image/x-icon" href="style/icons/favicon.ico">
         <meta charset="UTF-8">
         <link rel="stylesheet" href="style/main.css" />
 </head>
@@ -155,6 +156,14 @@ if (isset($_POST['create_track'])) {
                         $db = new PDO('sqlite:/var/www/html/db/gpx.sqlite');
                         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+                        $qry = $db->query("SELECT COUNT(*) FROM gpx_points WHERE track_id IS NULL");
+                        $unassignedCount = $qry->fetchColumn();
+                        if ($unassignedCount > 0) {
+                                $firstPoint = $db->query("SELECT timestamp FROM gpx_points WHERE track_id IS NULL ORDER BY timestamp ASC LIMIT 1")->fetchColumn();
+                                $lastPoint = $db->query("SELECT timestamp FROM gpx_points WHERE track_id IS NULL ORDER BY timestamp DESC LIMIT 1")->fetchColumn();
+                                echo "<p style='color:orange'>There are $unassignedCount unassigned GPX points. Beginning at: $firstPoint, ending at: $lastPoint</p>";
+                        }
+
                         $stmt = $db->query("
                                 SELECT t.id, t.name, t.color,
                                         MIN(g.timestamp) AS start_time,
@@ -193,8 +202,8 @@ if (isset($_POST['create_track'])) {
                                                                                 value="<?= str_replace(' ', 'T', $track['end_time']) ?>" /></td>
                                                                 <td><?= $track['point_count'] ?></td>
                                                                 <td>
-                                                                        <button class="saveBtn">💾 Save</button>
-                                                                        <button class="deleteBtn">🗑 Delete</button>
+                                                                        <button class="saveBtn" title="Save"><img src="style/icons/diskette.png" alt="Save" width="20" height="20"></button>
+                                                                        <button class="deleteBtn" title="Delete"><img src="style/icons/trash.png" alt="Delete" width="20" height="20"></button>
                                                                 </td>
                                                         </tr>
                                                 <?php endforeach; ?>

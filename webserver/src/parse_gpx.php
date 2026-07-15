@@ -13,7 +13,8 @@ function parseGPX($filename, $sensor = 'default')
             latitude REAL NOT NULL,
             longitude REAL NOT NULL,
             elevation REAL,
-            timestamp DATETIME NOT NULL
+            timestamp DATETIME NOT NULL,
+            track_id INTEGER
         )
     ");
 
@@ -29,8 +30,8 @@ function parseGPX($filename, $sensor = 'default')
 
         // Prepare insert statement
         $stmt = $db->prepare("
-        INSERT INTO gpx_points (sensor_nr, latitude, longitude, elevation, timestamp)
-        VALUES (:sensor_nr, :lat, :lon, :ele, :time)
+        INSERT INTO gpx_points (sensor_nr, latitude, longitude, elevation, timestamp, track_id)
+        VALUES (:sensor_nr, :lat, :lon, :ele, :time, :track_id)
     ");
 
         // Find all trackpoints
@@ -47,7 +48,8 @@ function parseGPX($filename, $sensor = 'default')
                                 ':lat' => $lat,
                                 ':lon' => $lon,
                                 ':ele' => $ele,
-                                ':time' => $time
+                                ':time' => $time,
+                                ':track_id' => NULL
                         ]);
                 }
         }

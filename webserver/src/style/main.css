@@ -169,7 +169,7 @@ html {
 }
 
 .admin-form {
-        max-width: 420px;
+        max-width: 30vw;
         margin: 0 auto;
         padding: 1rem;
         background: #ffffff;

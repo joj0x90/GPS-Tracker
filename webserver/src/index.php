@@ -30,6 +30,7 @@ $tracks = $tracksStmt->fetchAll(PDO::FETCH_ASSOC);
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>GPX Track Viewer</title>
+        <link rel="icon" type="image/x-icon" href="style/icons/favicon.ico">
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
         <link rel="stylesheet" href="style/main.css" />
 
@@ -95,7 +96,7 @@ $tracks = $tracksStmt->fetchAll(PDO::FETCH_ASSOC);
                 <div id="map"></div>
 
                 <!-- Floating icon in bottom right -->
-                <div id="infoIcon">🗠</div>
+                <div id="infoIcon"><img src="style/icons/chart.png" alt="Info" width="30" height="30"></div>
 
                 <!-- Pop-up overlay -->
                 <div id="infoPopup">
