@@ -11,7 +11,7 @@ if (is_file($versionFile)) {
 $commitHash = getenv('APP_COMMIT_SHA') ?: '';
 $commitDisplay = $commitHash !== '' ? substr($commitHash, 0, 8) : 'n/a';
 $buildTimestamp = getenv('APP_BUILD_TIMESTAMP') ?: '';
-$buildDisplay = $buildTimestamp !== '' ? $buildTimestamp : 'unable to fetch build timestamp';
+$buildDisplay = $buildTimestamp !== '' ? $buildTimestamp : 'n/a';
 ?><!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,8 +40,9 @@ $buildDisplay = $buildTimestamp !== '' ? $buildTimestamp : 'unable to fetch buil
                     </a>
                 </p>
                 <p style="margin-top: 1rem; font-size: 0.95rem; color: #4b5563;">
-                    Version: <strong>v<?= htmlspecialchars($version) ?></strong> (<?= htmlspecialchars($buildDisplay) ?>)<br>
-                    Commit: <strong><?= htmlspecialchars($commitDisplay) ?></strong><br>
+                    Version: <strong>v<?= htmlspecialchars($version) ?></strong><br>
+                    Build Timestamp: <strong><?= htmlspecialchars($buildDisplay) ?></strong><br>
+                    Commit: <strong><?= htmlspecialchars($commitDisplay) ?></strong>
                 </p>
             </div>
         </div>
