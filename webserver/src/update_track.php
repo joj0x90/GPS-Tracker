@@ -37,4 +37,4 @@ $db->prepare("UPDATE gpx_points SET track_id = NULL WHERE track_id = :id")
 $db->prepare("UPDATE gpx_points SET track_id = :id WHERE timestamp >= :start AND timestamp <= :end")
         ->execute([':id' => $id, ':start' => $start, ':end' => $end]);
 
-echo "✅ Track " . $name . " updated.";
+echo "✅ Track " . $name . " updated. Track ID: " . $id . ". Points reassigned between " . $start . " and " . $end . ".";

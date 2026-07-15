@@ -26,7 +26,6 @@ $buildDisplay = $buildTimestamp !== '' ? $buildTimestamp : 'n/a';
         <header class="admin-header">
             <a href="index.php" class="home-btn"><img src="style/icons/home.png" width="20" height="20"> Home</a>
             <h1 class="admin-title">About</h1>
-            <div class="admin-header-spacer"></div>
         </header>
 
         <div class="admin-content">

@@ -114,7 +114,10 @@ if (isset($_POST['create_track'])) {
         <title>Admin Panel</title>
         <link rel="icon" type="image/x-icon" href="style/icons/favicon.ico">
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="stylesheet" href="style/main.css" />
+        <link rel="stylesheet" href="style/table.css" />
+        <link rel="stylesheet" href="style/mobile.css" />
 </head>
 
 <body class="admin-body">
@@ -189,21 +192,30 @@ if (isset($_POST['create_track'])) {
                                                 </tr>
                                         </thead>
                                         <tbody>
-                                                <?php foreach ($tracks as $track): ?>
-                                                        <tr data-track-id="<?= $track['id'] ?>">
-                                                                <td><input type="text" class="nameInput"
-                                                                                value="<?= htmlspecialchars($track['name']) ?>" /></td>
-                                                                <td><input type="color" class="colorInput"
-                                                                                value="<?= htmlspecialchars($track['color']) ?>" />
+                                                <?php foreach ($tracks as $track):
+                                                        $start_time = $track['start_time'] ?? '';
+                                                        $end_time = $track['end_time'] ?? '';
+                                                        $start_attr = ($start_time !== null && $start_time !== '') ? htmlspecialchars(str_replace(' ', 'T', $start_time)) : '';
+                                                        $end_attr = ($end_time !== null && $end_time !== '') ? htmlspecialchars(str_replace(' ', 'T', $end_time)) : '';
+                                                        $start_display = ($start_time !== null && $start_time !== '') ? htmlspecialchars($start_time) : '&nbsp;';
+                                                        $end_display = ($end_time !== null && $end_time !== '') ? htmlspecialchars($end_time) : '&nbsp;';
+                                                ?>
+                                                        <tr data-track-id="<?= $track['id'] ?>"
+                                                            data-name="<?= htmlspecialchars($track['name']) ?>"
+                                                            data-color="<?= htmlspecialchars($track['color']) ?>"
+                                                            data-start="<?= $start_attr ?>"
+                                                            data-end="<?= $end_attr ?>">
+                                                                <td class="nameCell"><?= htmlspecialchars($track['name']) ?></td>
+                                                                <td class="colorCell">
+                                                                        <div class="color-box" style="background: <?= htmlspecialchars($track['color']) ?>" aria-label="Track color"></div>
                                                                 </td>
-                                                                <td><input type="datetime-local" class="startInput"
-                                                                                value="<?= str_replace(' ', 'T', $track['start_time']) ?>" /></td>
-                                                                <td><input type="datetime-local" class="endInput"
-                                                                                value="<?= str_replace(' ', 'T', $track['end_time']) ?>" /></td>
+                                                                <td class="startCell"><?= $start_display ?></td>
+                                                                <td class="endCell"><?= $end_display ?></td>
                                                                 <td><?= $track['point_count'] ?></td>
-                                                                <td>
-                                                                        <button class="saveBtn" title="Save"><img src="style/icons/diskette.png" alt="Save" width="20" height="20"></button>
-                                                                        <button class="deleteBtn" title="Delete"><img src="style/icons/trash.png" alt="Delete" width="20" height="20"></button>
+                                                                <td class="actionsCell">
+                                                                        <button type="button" class="editBtn" title="Edit">Edit</button>
+                                                                        <button type="button" class="saveBtn hidden" title="Save">Save</button>
+                                                                        <button type="button" class="cancelBtn hidden" title="Cancel">Cancel</button>
                                                                 </td>
                                                         </tr>
                                                 <?php endforeach; ?>
@@ -294,29 +306,141 @@ if (isset($_POST['create_track'])) {
         </div>
 
         <script>
-                document.querySelectorAll('.saveBtn').forEach(btn => {
-                        btn.addEventListener('click', async (e) => {
-                                const row = e.target.closest('tr');
-                                const id = row.dataset.trackId;
-                                const name = row.querySelector('.nameInput').value.trim();
-                                const color = row.querySelector('.colorInput').value;
-                                const start = row.querySelector('.startInput').value;
-                                const end = row.querySelector('.endInput').value;
+                function createInput(name, value, type = 'text') {
+                        const input = document.createElement('input');
+                        input.type = type;
+                        input.value = value;
+                        input.className = `${name}Input`;
+                        if (type === 'datetime-local') {
+                                input.step = '1';
+                        }
+                        return input;
+                }
 
-                                if (!name || !start || !end) {
-                                        alert("All fields are required.");
-                                        return;
-                                }
+                function renderRowText(row) {
+                        const name = row.dataset.name;
+                        const color = row.dataset.color;
+                        const start = row.dataset.start;
+                        const end = row.dataset.end;
 
-                                const res = await fetch('update_track.php', {
-                                        method: 'POST',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({ id, name, color, start, end })
-                                });
+                        row.querySelector('.nameCell').textContent = name;
+                        row.querySelector('.colorCell').innerHTML = `<div class="color-box" style="background: ${color}" aria-label="Track color"></div>`;
+                        row.querySelector('.startCell').textContent = start.replace('T', ' ');
+                        row.querySelector('.endCell').textContent = end.replace('T', ' ');
 
-                                const result = await res.text();
+                        row.querySelector('.editBtn').classList.remove('hidden');
+                        row.querySelector('.saveBtn').classList.add('hidden');
+                        row.querySelector('.cancelBtn').classList.add('hidden');
+                }
+
+                function renderRowEdit(row) {
+                        const name = row.dataset.name;
+                        const color = row.dataset.color;
+                        const start = row.dataset.start;
+                        const end = row.dataset.end;
+
+                        const nameCell = row.querySelector('.nameCell');
+                        nameCell.innerHTML = '';
+                        nameCell.appendChild(createInput('name', name, 'text'));
+
+                        const colorCell = row.querySelector('.colorCell');
+                        colorCell.innerHTML = '';
+                        colorCell.appendChild(createInput('color', color, 'color'));
+
+                        const startCell = row.querySelector('.startCell');
+                        startCell.innerHTML = '';
+                        startCell.appendChild(createInput('start', start, 'datetime-local'));
+
+                        const endCell = row.querySelector('.endCell');
+                        endCell.innerHTML = '';
+                        endCell.appendChild(createInput('end', end, 'datetime-local'));
+
+                        row.querySelector('.editBtn').classList.add('hidden');
+                        row.querySelector('.saveBtn').classList.remove('hidden');
+                        row.querySelector('.cancelBtn').classList.remove('hidden');
+                }
+
+                function cancelEdit(row) {
+                        if (!row.querySelector('.nameCell')) {
+                                return;
+                        }
+                        renderRowText(row);
+                }
+
+                function saveEdit(row) {
+                        const id = row.dataset.trackId;
+                        const name = row.querySelector('.nameInput').value.trim();
+                        const color = row.querySelector('.colorInput').value;
+                        const start = row.querySelector('.startInput').value;
+                        const end = row.querySelector('.endInput').value;
+
+                        if (!name || !start || !end) {
+                                alert('All fields are required.');
+                                return;
+                        }
+
+                        console.log("start: " + start + ", end: " + end);
+
+                        fetch('update_track.php', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ id, name, color, start, end })
+                        })
+                        .then(res => res.text())
+                        .then(result => {
                                 alert(result);
                                 location.reload();
+                        });
+                }
+
+                document.querySelectorAll('.editBtn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                                const row = e.target.closest('tr');
+                                renderRowEdit(row);
+                        });
+                });
+
+                document.querySelectorAll('.saveBtn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                                const row = e.target.closest('tr');
+                                saveEdit(row);
+                        });
+                });
+
+                document.querySelectorAll('.cancelBtn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                                const row = e.target.closest('tr');
+                                cancelEdit(row);
+                        });
+                });
+
+                document.querySelectorAll('.trackTable .nameCell').forEach(cell => {
+                        cell.addEventListener('click', (e) => {
+                                const row = e.target.closest('tr');
+                                if (!row) return;
+                                const isExpanded = row.classList.contains('expanded');
+                                // Collapse other rows in the same tbody first
+                                const tbody = row.closest('tbody');
+                                if (tbody) {
+                                        tbody.querySelectorAll('tr').forEach(other => {
+                                                if (other !== row) {
+                                                        cancelEdit(other);
+                                                        other.classList.remove('expanded');
+                                                }
+                                        });
+                                }
+                                if (isExpanded) {
+                                        // If the row is currently in edit mode (save visible), don't collapse it
+                                        const saveBtn = row.querySelector('.saveBtn');
+                                        const inEdit = saveBtn && !saveBtn.classList.contains('hidden');
+                                        if (inEdit) {
+                                                return; // keep the card open while editing
+                                        }
+                                        cancelEdit(row);
+                                        row.classList.remove('expanded');
+                                } else {
+                                        row.classList.add('expanded');
+                                }
                         });
                 });
 
@@ -325,7 +449,7 @@ if (isset($_POST['create_track'])) {
                                 const row = e.target.closest('tr');
                                 const id = row.dataset.trackId;
 
-                                if (!confirm("Are you sure you want to delete this track? This cannot be undone.")) return;
+                                if (!confirm('Are you sure you want to delete this track? This cannot be undone.')) return;
 
                                 const res = await fetch('delete_track_info.php', {
                                         method: 'POST',

@@ -35,6 +35,7 @@ $tracks = $tracksStmt->fetchAll(PDO::FETCH_ASSOC);
         <link rel="icon" type="image/x-icon" href="style/icons/favicon.ico">
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
         <link rel="stylesheet" href="style/main.css" />
+        <link rel="stylesheet" href="style/mobile.css" />
 
         <!-- thirdparty tools for displaying proper html5 charts -->
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

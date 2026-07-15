@@ -1,0 +1,247 @@
+/* Mobile hamburger and menu */
+.hamburger-btn {
+    display: none;
+    width:auto;
+    height:auto;
+    background: transparent;
+    border: 1px solid #cbd5e1;
+    padding: 0.4rem 0.6rem;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    position: fixed;
+    left: .5rem;
+    top: .5rem;
+}
+
+.mobile-menu {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: auto;
+    max-width: 360px;
+    transform: translateX(-120%);
+    transition: transform 220ms ease;
+    background: rgba(240,248,255,0.98);
+    border-right: 1px solid #e6eef6;
+    box-shadow: 6px 0 18px rgba(0,0,0,0.12);
+    padding: 1rem;
+    z-index: 1100;
+    overflow-y: auto;
+}
+
+.mobile-menu.open {
+    transform: translateX(0);
+}
+
+.mobile-menu .mobile-close {
+    position: absolute;
+    right: .5rem;
+    top: .5rem;
+    background: transparent;
+    border: none;
+    font-size: 1.4rem;
+    cursor: pointer;
+    color: #334155;
+}
+
+.mobile-menu .mobile-menu-inner {
+    margin-top: 2.2rem;
+}
+
+.mobile-menu .mobile-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.mobile-menu .mobile-links a {
+    padding: 0.65rem 0.75rem;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #ffffff;
+    font-weight: 600;
+    display: inline-block;
+    text-align: center;
+}
+
+.mobile-menu .mobile-links a { 
+    border-radius: .5rem;
+    background: #7ba3cb;
+    color: #333;
+    font-weight: 600;
+    border: 0.1rem solid #ccc;
+}
+
+@media (max-width: 600px) {
+    .hamburger-btn { display: inline-block; }
+    .top-bar-right { display: none; }
+    .top-bar-left label, .top-bar-left .year { display: none; }
+    #filterForm { display: none; }
+    .top-bar { position: relative; }
+    /* Ensure last fix and track select stay visible */
+    .top-bar-center { align-items: flex-start; }
+
+    /* On narrow screens, move filters below the map */
+    #container {
+        flex-direction: column;
+    }
+
+    #filterForm {
+        order: 2;
+        padding: 8px;
+    }
+
+    #map {
+        order: 1;
+        height: 60vh;
+    }
+
+    .admin-page {
+        padding: 0.75rem 0.75rem 1.5rem;
+    }
+
+    .admin-header {
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        padding: 0.75rem;
+        align-items: center;
+    }
+
+    .admin-title {
+        grid-column: auto;
+        justify-self: center;
+        font-size: 1rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin: 0 0.5rem;
+    }
+
+    .admin-logout-form {
+        justify-self: end;
+    }
+
+    .admin-content {
+        align-items: center;
+        margin: 0 auto;
+    }
+
+    .admin-content > h1,
+    .admin-content > h2,
+    .admin-content > h3,
+    .admin-content > p,
+    .admin-content > .warning,
+    .admin-content > form,
+    .admin-content > table,
+    .admin-content > hr {
+        max-width: 90%;
+    }
+
+    .admin-form {
+        width: min(90%, 28rem);
+        max-width: 28rem;
+        margin: 0 auto;
+        padding: 0.9rem;
+    }
+
+    .form-row {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .trackTable {
+        display: block;
+        width: 100%;
+        margin: 1rem auto;
+        border: none;
+        box-shadow: none;
+        background: none;
+    }
+
+    .trackTable thead {
+        display: none;
+    }
+
+    .trackTable tbody {
+        display: block;
+    }
+
+    .trackTable tr {
+        display: block;
+        margin-bottom: 1rem;
+        border: 1px solid #dce4ee;
+        border-radius: 1rem;
+        background: none;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+    }
+
+    .trackTable td {
+        display: none;
+        width: 100%;
+        padding: 0;
+        border: none;
+        text-align: left;
+    }
+
+    .trackTable td.nameCell {
+        display: flex;
+        width: 90%;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .trackTable td.nameCell::after {
+        content: "▶";
+        transition: transform 150ms ease;
+        font-size: 0.95rem;
+        margin-left: 1rem;
+    }
+
+    .trackTable tr.expanded td.nameCell::after {
+        transform: rotate(90deg);
+    }
+
+    .trackTable tr.expanded td:not(.nameCell) {
+        display: flex;
+        flex-direction: column;
+        padding: .2rem 1rem;
+        border-top: 1px solid #e3e8ee;
+    }
+
+    .trackTable tr.expanded td:not(.nameCell)::before {
+        content: attr(data-label);
+        font-weight: 700;
+        color: #334155;
+        margin-bottom: 0.25rem;
+    }
+
+    .trackTable tr.expanded td.actionsCell {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.55rem;
+    }
+
+    .trackTable td .color-box {
+        margin-right: 0.5rem;
+    }
+
+    .trackTable td input[type="text"],
+    .trackTable td input[type="datetime-local"] {
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+    .trackTable tr.expanded td.nameCell input,
+    .trackTable tr.expanded td:not(.nameCell) input {
+        width: 90%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+}

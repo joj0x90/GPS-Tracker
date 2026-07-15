@@ -1,0 +1,84 @@
+.trackTable {
+    margin: 1rem auto;
+    border-collapse: collapse;
+    background: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    border-radius: 1rem;
+}
+
+.trackTable th {
+    background: #2f4f6f;
+    color: #ffffff;
+    padding: 0.75rem 0.9rem;
+    text-align: center;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    border: 1px solid #dce4ee;
+}
+
+.trackTable td {
+    padding: 0.3rem 0.5rem;
+    text-align: center;
+    border: 1px solid #e3e8ee;
+}
+
+.trackTable tr:nth-child(even) td {
+    background: #f7f9fc;
+}
+
+.trackTable tr:nth-child(odd) td {
+    background: #ffffff;
+}
+
+.trackTable tr:hover td {
+    background: #eef5ff;
+}
+
+.trackTable td:nth-child(1), .trackTable th:nth-child(1) {
+    border-left: none;
+}
+
+.trackTable th:nth-child(1){
+    border-top: none;
+}
+
+.trackTable th:last-child{
+    border-top: none;
+    border-right: none;
+}
+
+.trackTable tr:last-child td {
+    border-bottom: none;
+}
+
+.trackTable td:last-child, .trackTable th:last-child {
+    border-right: none;
+}
+
+.trackTable td:nth-child(5) {
+    font-weight: bold;
+}
+
+.color-box {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 0.3rem;
+    border: 1px solid #cbd5e1;
+}
+
+.trackTable input[type="text"],
+.trackTable input[type="datetime-local"] {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: .2rem;
+}
+
+.trackTable input[type="datetime-local"] {
+    width: 16rem;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: .2rem;
+}
