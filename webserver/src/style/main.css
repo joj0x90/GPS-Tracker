@@ -13,16 +13,14 @@ html {
 
 #filterForm {
         display: flex;
-        gap: 1rem;
-        padding: 10px;
+        gap: .2rem;
+        padding: .2rem;
         flex-wrap: wrap;
 }
 
-#filterForm input,
-#filterForm select,
-#filterForm button {
+#filterForm select {
         flex: 1 1 150px;
-        padding: 6px 8px;
+        padding: .1rem .2rem;
         font-size: 1em;
 }
 
@@ -60,6 +58,7 @@ html {
         display: flex;
         min-height: 1px;
         align-items: flex-start;
+        flex-direction: column;
 }
 
 .top-bar-right {
@@ -329,7 +328,7 @@ body.no-scroll { overflow: hidden; }
         text-align: center;
 }
 
-.mobile-menu .mobile-links a.admin, .mobile-menu .mobile-links a.about { 
+.mobile-menu .mobile-links a { 
         border-radius: .5rem;
         background: #7ba3cb;
         color: #333;
@@ -340,13 +339,13 @@ body.no-scroll { overflow: hidden; }
 @media (max-width: 600px) {
         .hamburger-btn { display: inline-block; }
         .top-bar-right { display: none; }
-        .top-bar-left > label, .top-bar-left > .year-label { display: none; }
+        .top-bar-left label, .top-bar-left .year { display: none; }
         #filterForm { display: none; }
         .top-bar { position: relative; }
         /* Ensure last fix and track select stay visible */
         .top-bar-center { align-items: flex-start; }
         /* Make map below header */
-        #map { margin-top: 56px; }
+        /* #map { margin-top: 56px; } */
 }
 
 .attention-btn:hover {

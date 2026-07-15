@@ -8,7 +8,7 @@ $last_fix = $db->query("SELECT timestamp FROM gpx_points ORDER BY timestamp DESC
 
 $selectedYear = isset($_GET['year']) ? trim((string) $_GET['year']) : '';
 if ($selectedYear === '') {
-    $selectedYear = date('Y');
+    $selectedYear = $last_fix ? date('Y', strtotime($last_fix[0])) : date('Y');
 }
 
 $years = $db->query("SELECT DISTINCT strftime('%Y', timestamp) as year FROM gpx_points ORDER BY year DESC")->fetchAll(PDO::FETCH_COLUMN);
@@ -47,8 +47,8 @@ $tracks = $tracksStmt->fetchAll(PDO::FETCH_ASSOC);
                 <div class="top-bar">
                         <div class="top-bar-left">
                                 <button id="hamburgerBtn" class="hamburger-btn" onclick="toggleMenu()" aria-label="Menu">☰</button>
-                                <div class="year-label">Select Year:</div>
                                 <form id="filterForm" onsubmit="return false;">
+                                        <label for="year" class="year-label">Year:</label>
                                         <select id="year" onchange="window.location.href = '?year=' + this.value">
                                                 <?php foreach ($years as $year): ?>
                                                         <option value="<?= htmlspecialchars($year) ?>" <?= $year === $selectedYear ? 'selected' : '' ?>><?= htmlspecialchars($year) ?></option>
@@ -79,7 +79,7 @@ $tracks = $tracksStmt->fetchAll(PDO::FETCH_ASSOC);
                                 <form id="trackForm" onsubmit="return false;" style="margin-bottom: 1em;">
                                         <label for="trackSelect">Select Track:</label>
                                         <select id="trackSelect">
-                                                <option value="">-- Show All Tracks --</option>
+                                                <option value=""><?php echo (count($tracks) > 0) ? "-- Show All Tracks --" : "-- No tracks available --" ?></option>
                                                 <?php foreach ($tracks as $track): ?>
                                                         <option value="<?= htmlspecialchars($track['id']) ?>"
                                                                 data-color="<?= htmlspecialchars($track['color']) ?>">
@@ -91,6 +91,7 @@ $tracks = $tracksStmt->fetchAll(PDO::FETCH_ASSOC);
                         </div>
 
                         <div class="top-bar-right">
+                                <button id="top-btn" onclick="window.location.href='upload.php'"><img src="style/icons/upload.png" width="20" height="20"> Upload</button>
                                 <button id="top-btn" onclick="window.location.href='admin.php'"><img src="style/icons/admin.png" width="20" height="20"> Admin</button>
                                 <button id="top-btn" onclick="window.location.href='about.php'"><img src="style/icons/info.png" width="20" height="20"> About</button>
 
@@ -110,8 +111,9 @@ $tracks = $tracksStmt->fetchAll(PDO::FETCH_ASSOC);
                                         </select>
                                 </form>
                                 <div class="mobile-links">
-                                        <a class="admin" href="admin.php">Admin</a>
-                                        <a class="about" href="about.php">About</a>
+                                        <a class="upload" href="upload.php"><img src="style/icons/upload.png" width="20" height="20"> Upload</a>
+                                        <a class="admin" href="admin.php"><img src="style/icons/admin.png" width="20" height="20"> Admin</a>
+                                        <a class="about" href="about.php"><img src="style/icons/info.png" width="20" height="20"> About</a>
                                 </div>
                         </div>
                 </div>

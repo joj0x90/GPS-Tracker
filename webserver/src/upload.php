@@ -34,19 +34,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['gpx_file'])) {
         // Display upload form
         ?>
         <!DOCTYPE html>
-        <html>
-
+        <html lang="en">
         <head>
+                <meta charset="UTF-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <title>Upload GPX File</title>
                 <link rel="icon" type="image/x-icon" href="style/icons/favicon.ico">
+                <link rel="stylesheet" href="style/main.css" />
         </head>
 
-        <body>
-                <h1>Upload GPX File</h1>
-                <form method="post" class="admin-form" enctype="multipart/form-data">
-                        <input type="file" name="gpx_file" accept=".gpx" required>
-                        <button type="submit">Upload</button>
-                </form>
+        <body class="admin-body">
+                <header class="admin-header">
+                        <a href="index.php" class="home-btn"><img src="style/icons/home.png" width="20" height="20"> Home</a>
+                        <h1 class="admin-title">Upload GPX File</h1>
+                        <div class="admin-header-spacer"></div>
+                </header>
+                <div class="admin-content">
+                        <form method="post" class="admin-form" enctype="multipart/form-data">
+                                <input type="file" name="gpx_file" accept=".gpx" required>
+                                <button type="submit"><img src="style/icons/upload.png" width="20" height="20"> Upload</button>
+                        </form>
+                </div>
         </body>
 
         </html>
