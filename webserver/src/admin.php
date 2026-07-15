@@ -120,12 +120,12 @@ if (isset($_POST['create_track'])) {
 <body class="admin-body">
         <div class="admin-page">
                 <header class="admin-header">
-                        <a href="index.php" class="home-btn">Home</a>
+                        <a href="index.php" class="home-btn"><img src="style/icons/home.png" width="20" height="20"> Home</a>
                         <h1 class="admin-title">Admin Panel</h1>
                         <?php if (isset($_SESSION['admin'])): ?>
                                 <form method="POST" class="admin-logout-form">
                                         <input type="hidden" name="logout" value="1">
-                                        <button type="submit" class="logout-btn">Log Out</button>
+                                        <button type="submit" class="logout-btn"><img src="style/icons/logout.png" width="20" height="20"> Log Out</button>
                                 </form>
                         <?php else: ?>
                                 <div class="admin-header-spacer"></div>
@@ -244,7 +244,7 @@ if (isset($_POST['create_track'])) {
                         </div>
 
                         <div class="form-actions">
-                                <button type="submit" name="create_track">Create Track</button>
+                                <button type="submit" name="create_track"><img src="style/icons/add.png" width="20" height="20"> Create Track</button>
                         </div>
                 </form>
 
@@ -253,7 +253,7 @@ if (isset($_POST['create_track'])) {
                         <h2>Delete All GPX Points</h2>
                         <p>This will permanently delete all GPX points from the database.</p>
                         <input type="hidden" name="delete" value="1">
-                        <button type="submit" class="warning-btn">Delete All GPX Points</button>
+                        <button type="submit" class="warning-btn"><img src="style/icons/trash.png" width="20" height="20"> Delete All GPX Points</button>
                 </form>
 
                 <!-- Delete range -->
@@ -275,7 +275,7 @@ if (isset($_POST['create_track'])) {
 
                         <input type="hidden" name="delete_range" value="1">
                         <div class="form-actions">
-                                <button type="submit" class="attention-btn">Delete GPX Points in Range</button>
+                                <button type="submit" class="attention-btn"><img src="style/icons/trash.png" width="20" height="20"> Delete GPX Points in Range</button>
                         </div>
                 </form>
 
@@ -283,7 +283,7 @@ if (isset($_POST['create_track'])) {
                 <div class="admin-form">
                         <h3>Delete a complete Track</h3>
                         <select id="deleteTrackSelect"></select>
-                        <button id="deleteTrackBtn">Delete Track</button>
+                        <button id="deleteTrackBtn"><img src="style/icons/trash.png" width="20" height="20"> Delete Track</button>
                 </div>  
 
 

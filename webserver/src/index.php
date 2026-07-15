@@ -88,7 +88,7 @@ $tracks = $tracksStmt->fetchAll(PDO::FETCH_ASSOC);
                         </div>
 
                         <div class="top-bar-right">
-                                <button id="login-btn" onclick="window.location.href='admin.php'">Admin</button>
+                                <button id="login-btn" onclick="window.location.href='admin.php'"><img src="style/icons/admin.png" width="20" height="20"> Admin</button>
                         </div>
                 </div>
 
