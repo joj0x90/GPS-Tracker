@@ -7,7 +7,7 @@ ENV APP_COMMIT_SHA=$APP_COMMIT_SHA \
 
 RUN apt update && apt upgrade -y
 RUN apt install -y \
-        sqlite3 libsqlite3-dev \
+        sqlite3 libsqlite3-dev
 
 RUN docker-php-ext-install pdo pdo_sqlite
 
