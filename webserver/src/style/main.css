@@ -18,12 +18,6 @@ html {
     flex-wrap: wrap;
 }
 
-#filterForm select {
-    flex: 1 1 150px;
-    padding: .1rem .2rem;
-    font-size: 1em;
-}
-
 #map {
     flex-grow: 1;
     min-height: 10rem;
@@ -173,8 +167,8 @@ html {
 }
 
 .admin-form input[type="text"],
-.admin-form input[type="datetime-local"],
-.admin-form select,
+input[type="datetime-local"],
+select,
 .admin-form button {
     box-sizing: border-box;
     margin-top: 0.5rem;
