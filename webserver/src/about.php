@@ -1,6 +1,4 @@
 <?php
-include_once 'helper_functions.php';
-
 $versionFile = __DIR__ . '/version.txt';
 $version = '0.2';
 if (is_file($versionFile)) {
@@ -14,7 +12,6 @@ $commitHash = getenv('APP_COMMIT_SHA') ?: '';
 $commitDisplay = $commitHash !== '' ? substr($commitHash, 0, 8) : 'n/a';
 $buildTimestamp = getenv('APP_BUILD_TIMESTAMP') ?: '';
 $buildDisplay = $buildTimestamp !== '' ? $buildTimestamp : 'n/a';
-$tz_code = $buildTimestamp !== '' ? formatUtcOffset(getenv('APP_TIMEZONE') ?: 'Europe/Berlin') : 'n/a';
 ?><!DOCTYPE html>
 <html lang="en">
 <head>
@@ -43,7 +40,7 @@ $tz_code = $buildTimestamp !== '' ? formatUtcOffset(getenv('APP_TIMEZONE') ?: 'E
                 </p>
                 <p style="margin-top: 1rem; font-size: 0.95rem; color: #4b5563;">
                     Version: <strong>v<?= htmlspecialchars($version) ?></strong><br>
-                    Build Timestamp: <strong><?= htmlspecialchars($buildDisplay) . " (" . $tz_code . ")" ?> </strong><br>
+                    Build Timestamp: <strong><?= htmlspecialchars($buildDisplay) ?> </strong><br>
                     Commit: <strong><?= htmlspecialchars($commitDisplay) ?></strong>
                 </p>
             </div>

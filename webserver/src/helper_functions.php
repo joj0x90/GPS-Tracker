@@ -18,25 +18,4 @@ function calc_time($hours)
     $value = round($years, 1);
     return $value . ' ' . ($value == 1 ? 'year' : 'years');
 }
-
-function formatUtcOffset(string $timezoneId, ?DateTimeInterface $at = null): string
-{
-    $tz = new DateTimeZone($timezoneId);
-    $at = $at
-        ? DateTimeImmutable::createFromInterface($at)->setTimezone($tz)
-        : new DateTimeImmutable('now', $tz);
-
-    $offsetSeconds = $tz->getOffset($at);
-    $sign = $offsetSeconds >= 0 ? '+' : '-';
-    $offsetSeconds = abs($offsetSeconds);
-
-    $hours = intdiv($offsetSeconds, 3600);
-    $minutes = intdiv($offsetSeconds % 3600, 60);
-
-    return $minutes === 0
-        ? sprintf('UTC%s%d', $sign, $hours)
-        : sprintf('UTC%s%02d:%02d', $sign, $hours, $minutes);
-}
-
-
 ?>

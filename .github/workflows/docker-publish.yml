@@ -20,7 +20,7 @@ jobs:
         id: meta
         run: |
           echo "commit_sha=${{ github.sha }}" >> "$GITHUB_OUTPUT"
-          echo "build_timestamp=$(TZ='Europe/Berlin' date '+%Y-%m-%d %H:%M:%S %Z')" >> "$GITHUB_OUTPUT"
+          echo "build_timestamp=$(TZ='Europe/Berlin' date '+%Y-%m-%d %H:%M:%S %:z')" >> "$GITHUB_OUTPUT"
 
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
@@ -30,7 +30,6 @@ jobs:
           docker build \
             --build-arg APP_COMMIT_SHA="${{ steps.meta.outputs.commit_sha }}" \
             --build-arg APP_BUILD_TIMESTAMP="${{ steps.meta.outputs.build_timestamp }}" \
-            --build-arg APP_TIMEZONE="Europe/Berlin" \
             -t "$IMAGE_NAME:latest" webserver
 
       - name: Push Docker image

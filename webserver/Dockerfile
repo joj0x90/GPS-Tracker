@@ -2,18 +2,12 @@ FROM php:apache
 
 ARG APP_COMMIT_SHA=dev
 ARG APP_BUILD_TIMESTAMP=unknown
-ARG APP_TIMEZONE=Europe/Berlin
 ENV APP_COMMIT_SHA=$APP_COMMIT_SHA \
-    APP_BUILD_TIMESTAMP=$APP_BUILD_TIMESTAMP \
-    TZ=$APP_TIMEZONE \
-    APP_TIMEZONE=$APP_TIMEZONE
+    APP_BUILD_TIMESTAMP=$APP_BUILD_TIMESTAMP
 
 RUN apt update && apt upgrade -y
-RUN apt install -y --no-install-recommends \
-        sqlite3 libsqlite3-dev tzdata \
-         && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
-    && echo $TZ > /etc/timezone \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt install -y \
+        sqlite3 libsqlite3-dev \
 
 RUN docker-php-ext-install pdo pdo_sqlite
 
