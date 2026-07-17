@@ -27,6 +27,7 @@ jobs:
 
       - name: Build Docker image
         run: |
+          timedatectl set-timezone Europe/Berlin
           docker build \
             --build-arg APP_COMMIT_SHA="${{ steps.meta.outputs.commit_sha }}" \
             --build-arg APP_BUILD_TIMESTAMP="${{ steps.meta.outputs.build_timestamp }}" \
